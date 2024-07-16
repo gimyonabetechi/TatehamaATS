@@ -3,31 +3,31 @@
     /// <summary>
     /// BF:LED制御部未定義故障
     /// </summary>
-    internal class LEDControlException : ATSCommonException
+    internal class LEDControlInitialzingFailure : ATSCommonException
     {
         /// <summary>
         /// BF:LED制御部未定義故障
         /// </summary>
-        public LEDControlException(int place) : base(place)
+        public LEDControlInitialzingFailure(int place) : base(place)
         {
         }
         /// <summary>
         /// BF:LED制御部未定義故障
         /// </summary>
-        public LEDControlException(int place, string message)
+        public LEDControlInitialzingFailure(int place, string message)
             : base(place, message)
         {
         }
         /// <summary>
         /// BF:LED制御部未定義故障
         /// </summary>
-        public LEDControlException(int place, string message, Exception inner)
+        public LEDControlInitialzingFailure(int place, string message, Exception inner)
             : base(place, message, inner)
         {
         }
         public override string ToCode()
         {
-            return Place.ToString() + "B0";
+            return Place.ToString() + "B3";
         }
     }
 }

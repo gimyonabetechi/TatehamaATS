@@ -27,7 +27,7 @@
         }
         public override string ToCode()
         {
-            return Place.ToString() + "81";
+            return Place.ToString() + "B1";
         }
     }
 }

@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -30,20 +32,34 @@ namespace TatehamaATS.DisplayLED
         {
             try
             {
-                Bitmap croppedImage = GetImageByNumber(imageNumber);
+                Bitmap croppedImage;
+                if (0x180 <= imageNumber && imageNumber <= 0x1FF || 0x280 <= imageNumber && imageNumber <= 0x2FF || 0x380 <= imageNumber && imageNumber <= 0x3FF)
+                {
+                    croppedImage = GetImageByNumber(311);
+                    //コード表示無視
+                    int codeC = (imageNumber >> 8) & 0xF;
+                    Bitmap codeCImage = GetImageByCodeNumber(codeC);
+                    int codeB = (imageNumber >> 4) & 0xF;
+                    Bitmap codeBImage = GetImageByCodeNumber(codeB);
+                    int codeA = imageNumber & 0xF;
+                    Bitmap codeAImage = GetImageByCodeNumber(codeA);
+
+                    using (Graphics g = Graphics.FromImage(croppedImage))
+                    {
+                        g.DrawImage(codeAImage, 26, 0, codeAImage.Width, codeAImage.Height);
+                        g.DrawImage(codeBImage, 19, 0, codeBImage.Width, codeBImage.Height);
+                        g.DrawImage(codeCImage, 12, 0, codeCImage.Width, codeCImage.Height);
+                    }
+                }
+                else
+                {
+                    croppedImage = GetImageByNumber(imageNumber);
+                }
                 PictureBox pictureBox = GetPictureBoxByIndex(pictureBoxIndex);
 
                 Bitmap enlargedImage = EnlargePixelArt(croppedImage);
 
-                // 画像を右に3px、下に3px移動する
-                Bitmap shiftedImage = new Bitmap(enlargedImage.Width, enlargedImage.Height);
-                using (Graphics g = Graphics.FromImage(shiftedImage))
-                {
-                    g.Clear(Color.Transparent);
-                    g.DrawImage(enlargedImage, new Rectangle(0, 0, enlargedImage.Width, enlargedImage.Height));
-                }
-
-                pictureBox.BackgroundImage = shiftedImage;
+                pictureBox.BackgroundImage = enlargedImage;
             }
             catch (Exception ex)
             {
@@ -103,11 +119,47 @@ namespace TatehamaATS.DisplayLED
 
             if (colIndex >= columns || rowIndex >= rows)
             {
-                throw new LEDDisplayNumberAbnormal(3, "指定された番号が無効です", new ArgumentOutOfRangeException());
+                throw new LEDDisplayNumberAbnormal(3, $"指定された番号{number}が無効です", new ArgumentOutOfRangeException());
             }
 
             int x = margin + colIndex * (width + margin);
             int y = margin + rowIndex * (height + margin);
+
+            Bitmap croppedImage = new Bitmap(width, height);
+            using (Graphics g = Graphics.FromImage(croppedImage))
+            {
+                g.DrawImage(sourceImage, new Rectangle(0, 0, width, height), new Rectangle(x, y, width, height), GraphicsUnit.Pixel);
+            }
+
+            return croppedImage;
+        }
+
+        /// <summary>
+        /// 指定した番号に基づいて故障数値画像を切り出す
+        /// </summary>
+        /// <param name="number">切り出す画像の番号</param>
+        /// <returns>切り出された画像</returns>
+        private Bitmap GetImageByCodeNumber(int number)
+        {
+            int columns = 4;
+            int rows = 4;
+            int width = 6;
+            int height = 16;
+            int margin = 1;
+            int dx = 104;
+            int dy = 204;
+
+
+            int colIndex = number / 4;
+            int rowIndex = number % 4;
+
+            if (colIndex >= columns || rowIndex >= rows)
+            {
+                throw new LEDDisplayNumberAbnormal(3, $"指定された番号{number}が無効です", new ArgumentOutOfRangeException());
+            }
+
+            int x = dx + margin + colIndex * (width + margin);
+            int y = dy + margin + rowIndex * (height + margin);
 
             Bitmap croppedImage = new Bitmap(width, height);
             using (Graphics g = Graphics.FromImage(croppedImage))

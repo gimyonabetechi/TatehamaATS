@@ -13,25 +13,40 @@ namespace TatehamaATS
 {
     public partial class MainWindow : Form
     {
-
-        private LEDWindow ledWindow;
+        private ControlLED controlLED;
+        private Relay relay;
 
         public MainWindow()
         {
             InitializeComponent();
+            TrainState.init();
+            controlLED = new ControlLED();
+            relay = new Relay();
         }
 
         private void LEDWindowButton_Click(object sender, EventArgs e)
         {
-            if (ledWindow == null || ledWindow.IsDisposed)
+            if (controlLED.isShow)
             {
-                ledWindow = new LEDWindow();
-                ledWindow.Show();
+                controlLED.LEDHide();
             }
             else
             {
-                ledWindow.BringToFront();
+                controlLED.LEDShow();
             }
+            LEDStatus.Text = controlLED.isShow ? "表　示" : "非表示";
+        }
+
+        private void ToL1Button_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void ToL2Button_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void ToL3Button_Click(object sender, EventArgs e)
+        {
         }
     }
 }
