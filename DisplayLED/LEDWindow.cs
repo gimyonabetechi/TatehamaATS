@@ -1,102 +1,143 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
 using System.Drawing;
-using System.Runtime.InteropServices;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using TatehamaATS.Exceptions;
 
 namespace TatehamaATS.DisplayLED
 {
     public partial class LEDWindow : Form
     {
-        private int[,] ledArray;
-        private const int ledRows = 16;
-        private const int ledCols = 32;
-        private const int ledPanels = 3;
-        private const int ledMargin = 10; // 枠の幅
+        private Bitmap sourceImage;
 
         public LEDWindow()
         {
             InitializeComponent();
-            InitializeLEDDisplay();
-            this.Resize += new EventHandler(this.LEDWindow_Resize);
-            this.FormBorderStyle = FormBorderStyle.None;
-            this.BackColor = Color.FromArgb(16, 23, 26);
-            this.TransparencyKey = Color.Lime;
-
-            // 枠の内側を灰色に設定
-            pictureBox1.BackColor = Color.FromArgb(16, 23, 26);
-
-            // ウィンドウのサイズ変更を可能にする
-            this.MouseDown += new MouseEventHandler(this.LEDWindow_MouseDown);
+            sourceImage = Properties.Resources.ATS_LED2;
         }
 
         /// <summary>
-        /// LED表示器の初期設定
+        /// 切り出された画像を引き伸ばし、指定の表示器に表示する
         /// </summary>
-        private void InitializeLEDDisplay()
+        /// <param name="pictureBoxIndex">表示するPictureBoxの番号（1～3）</param>
+        /// <param name="imageNumber">表示する画像の番号</param>
+        internal void DisplayImage(int pictureBoxIndex, int imageNumber)
         {
-            ledArray = new int[ledRows, ledCols];
-            // 仮のデータを設定
-            for (int i = 0; i < ledRows; i++)
+            try
             {
-                for (int j = 0; j < ledCols; j++)
+                Bitmap croppedImage = GetImageByNumber(imageNumber);
+                PictureBox pictureBox = GetPictureBoxByIndex(pictureBoxIndex);
+
+                Bitmap enlargedImage = EnlargePixelArt(croppedImage);
+
+                // 画像を右に3px、下に3px移動する
+                Bitmap shiftedImage = new Bitmap(enlargedImage.Width, enlargedImage.Height);
+                using (Graphics g = Graphics.FromImage(shiftedImage))
                 {
-                    ledArray[i, j] = (i + j) % 2;
+                    g.Clear(Color.Transparent);
+                    g.DrawImage(enlargedImage, new Rectangle(0, 0, enlargedImage.Width, enlargedImage.Height));
                 }
+
+                pictureBox.BackgroundImage = shiftedImage;
+            }
+            catch (Exception ex)
+            {
+                throw new LEDControlException(3, $"エラーが発生しました: {ex.Message} @DisplayImage", ex);
             }
         }
 
         /// <summary>
-        /// LED表示器の描画処理
+        /// ピクセルアートを6倍に拡大する
         /// </summary>
-        private void pictureBox1_Paint(object sender, PaintEventArgs e)
+        /// <param name="original">元の画像</param>
+        /// <returns>6倍に拡大された画像</returns>
+        private Bitmap EnlargePixelArt(Bitmap original)
         {
-            Graphics g = e.Graphics;
+            int newWidth = original.Width * 6;
+            int newHeight = original.Height * 6;
 
-            // 描画領域のサイズを取得
-            int panelWidth = pictureBox1.ClientSize.Width;
-            int panelHeight = pictureBox1.ClientSize.Height / ledPanels;
-
-            // 各LEDのサイズを計算
-            int ledSize = Math.Min(
-                (panelWidth - 2 * ledMargin) / ledCols,
-                (panelHeight - 2 * ledMargin) / ledRows
-            );
-
-            // LEDの中央に配置するためのオフセットを計算
-            int offsetX = (panelWidth - (ledCols * ledSize)) / 2;
-            int offsetY;
-
-            for (int p = 0; p < ledPanels; p++)
+            Bitmap enlargedImage = new Bitmap(newWidth + 1, newHeight + 1);
+            using (Graphics g = Graphics.FromImage(enlargedImage))
             {
-                offsetY = (panelHeight * p) + ((panelHeight - (ledRows * ledSize)) / 2);
-
-                for (int i = 0; i < ledRows; i++)
+                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+                for (int y = 0; y < original.Height; y++)
                 {
-                    for (int j = 0; j < ledCols; j++)
+                    for (int x = 0; x < original.Width; x++)
                     {
-                        if (ledArray[i, j] == 1)
+                        Color pixelColor = original.GetPixel(x, y);
+                        for (int dy = 0; dy < 6; dy++)
                         {
-                            g.FillEllipse(Brushes.Red, offsetX + j * ledSize, offsetY + i * ledSize, ledSize, ledSize);
-                        }
-                        else
-                        {
-                            g.FillEllipse(Brushes.Black, offsetX + j * ledSize, offsetY + i * ledSize, ledSize, ledSize);
+                            for (int dx = 0; dx < 6; dx++)
+                            {
+                                enlargedImage.SetPixel(x * 6 + dx, y * 6 + dy, pixelColor);
+                            }
                         }
                     }
                 }
-
-                // 枠を描く
-                g.DrawRectangle(Pens.Gray, offsetX - ledMargin, offsetY - ledMargin, ledCols * ledSize + 2 * ledMargin, ledRows * ledSize + 2 * ledMargin);
             }
+
+            return enlargedImage;
+        }
+
+
+        /// <summary>
+        /// 指定した番号に基づいて画像を切り出す
+        /// </summary>
+        /// <param name="number">切り出す画像の番号</param>
+        /// <returns>切り出された画像</returns>
+        private Bitmap GetImageByNumber(int number)
+        {
+            int columns = 4;
+            int rows = 27;
+            int width = 32;
+            int height = 16;
+            int margin = 1;
+
+            int colIndex = number / 100;
+            int rowIndex = number % 100;
+
+            if (colIndex >= columns || rowIndex >= rows)
+            {
+                throw new LEDDisplayNumberAbnormal(3, "指定された番号が無効です", new ArgumentOutOfRangeException());
+            }
+
+            int x = margin + colIndex * (width + margin);
+            int y = margin + rowIndex * (height + margin);
+
+            Bitmap croppedImage = new Bitmap(width, height);
+            using (Graphics g = Graphics.FromImage(croppedImage))
+            {
+                g.DrawImage(sourceImage, new Rectangle(0, 0, width, height), new Rectangle(x, y, width, height), GraphicsUnit.Pixel);
+            }
+
+            return croppedImage;
         }
 
         /// <summary>
-        /// ウィンドウサイズ変更時の処理
+        /// 指定された番号に対応するPictureBoxを取得する
         /// </summary>
-        private void LEDWindow_Resize(object sender, EventArgs e)
+        /// <param name="index">PictureBoxの番号（1～3）</param>
+        /// <returns>対応するPictureBox</returns>
+        private PictureBox GetPictureBoxByIndex(int index)
         {
-            pictureBox1.Invalidate();
+            switch (index)
+            {
+                case 1:
+                    return L1;
+                case 2:
+                    return L2;
+                case 3:
+                    return L3;
+                default:
+                    throw new LEDControlException(3, $"無効な表示器番号: {index}@GetPictureBoxByIndex", new ArgumentOutOfRangeException());
+            }
         }
+
 
         /// <summary>
         /// ウィンドウのドラッグ開始位置
@@ -122,85 +163,6 @@ namespace TatehamaATS.DisplayLED
             if (e.Button == MouseButtons.Left)
             {
                 this.Location = new Point(this.Left + e.X - dragStartPoint.X, this.Top + e.Y - dragStartPoint.Y);
-            }
-        }
-
-        // Windows APIの宣言
-        private const int HT_CAPTION = 0x2;
-        private const int HT_LEFT = 0xA;
-        private const int HT_RIGHT = 0xB;
-        private const int HT_TOP = 0xC;
-        private const int HT_TOPLEFT = 0xD;
-        private const int HT_TOPRIGHT = 0xE;
-        private const int HT_BOTTOM = 0xF;
-        private const int HT_BOTTOMLEFT = 0x10;
-        private const int HT_BOTTOMRIGHT = 0x11;
-        private const int WM_NCHITTEST = 0x84;
-        private const int WM_SETCURSOR = 0x20;
-
-        [DllImport("user32.dll")]
-        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
-        [DllImport("user32.dll")]
-        public static extern bool ReleaseCapture();
-
-        /// <summary>
-        /// マウスダウンイベントの処理
-        /// </summary>
-        private void LEDWindow_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-            {
-                ReleaseCapture();
-                SendMessage(Handle, WM_NCHITTEST, 0, HT_CAPTION);
-            }
-        }
-
-        /// <summary>
-        /// サイズ変更処理のためのウィンドウメッセージのオーバーライド
-        /// </summary>
-        protected override void WndProc(ref Message m)
-        {
-            const int resizeAreaSize = 20; // サイズ変更エリアの広さを10に設定
-
-            switch (m.Msg)
-            {
-                case WM_NCHITTEST:
-                    base.WndProc(ref m);
-                    var cursor = this.PointToClient(Cursor.Position);
-
-                    // 左端
-                    if (cursor.X <= resizeAreaSize)
-                    {
-                        if (cursor.Y <= resizeAreaSize) m.Result = (IntPtr)HT_TOPLEFT;
-                        else if (cursor.Y >= this.ClientSize.Height - resizeAreaSize) m.Result = (IntPtr)HT_BOTTOMLEFT;
-                        else m.Result = (IntPtr)HT_LEFT;
-                    }
-                    // 右端
-                    else if (cursor.X >= this.ClientSize.Width - resizeAreaSize)
-                    {
-                        if (cursor.Y <= resizeAreaSize) m.Result = (IntPtr)HT_TOPRIGHT;
-                        else if (cursor.Y >= this.ClientSize.Height - resizeAreaSize) m.Result = (IntPtr)HT_BOTTOMRIGHT;
-                        else m.Result = (IntPtr)HT_RIGHT;
-                    }
-                    // 上端
-                    else if (cursor.Y <= resizeAreaSize)
-                    {
-                        m.Result = (IntPtr)HT_TOP;
-                    }
-                    // 下端
-                    else if (cursor.Y >= this.ClientSize.Height - resizeAreaSize)
-                    {
-                        m.Result = (IntPtr)HT_BOTTOM;
-                    }
-                    break;
-
-                case WM_SETCURSOR:
-                    base.WndProc(ref m);
-                    break;
-
-                default:
-                    base.WndProc(ref m);
-                    break;
             }
         }
     }
