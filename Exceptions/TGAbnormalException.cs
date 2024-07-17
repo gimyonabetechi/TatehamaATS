@@ -7,33 +7,33 @@ using System.Threading.Tasks;
 namespace TatehamaATS.Exceptions
 {
     /// <summary>
-    /// 84:継電部初期化失敗
+    /// C0:TG異常
     /// </summary>
-    internal class RelayInitialzingFailure : ATSCommonException
+    internal class TGAbnormalException : ATSCommonException
     {
         /// <summary>
-        /// 84:継電部初期化失敗
+        /// C0:TG異常
         /// </summary>
-        public RelayInitialzingFailure(int place) : base(place)
+        public TGAbnormalException(int place) : base(place)
         {
         }
         /// <summary>
-        /// 84:継電部初期化失敗
+        /// C0:TG異常
         /// </summary>
-        public RelayInitialzingFailure(int place, string message)
+        public TGAbnormalException(int place, string message)
             : base(place, message)
         {
         }
         /// <summary>
-        /// 84:継電部初期化失敗
+        /// C0:TG異常
         /// </summary>
-        public RelayInitialzingFailure(int place, string message, Exception inner)
+        public TGAbnormalException(int place, string message, Exception inner)
             : base(place, message, inner)
         {
         }
         public override string ToCode()
         {
-            return Place.ToString() + "84";
+            return Place.ToString() + "80";
         }
     }
 }

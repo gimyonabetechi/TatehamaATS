@@ -7,33 +7,33 @@ using System.Threading.Tasks;
 namespace TatehamaATS.Exceptions
 {
     /// <summary>
-    /// 84:継電部初期化失敗
+    /// A8:車両側ATS情報異常
     /// </summary>
-    internal class RelayInitialzingFailure : ATSCommonException
+    internal class TCSideATSDataAbnormalException : ATSCommonException
     {
         /// <summary>
-        /// 84:継電部初期化失敗
+        /// A8:車両側ATS情報異常
         /// </summary>
-        public RelayInitialzingFailure(int place) : base(place)
+        public TCSideATSDataAbnormalException(int place) : base(place)
         {
         }
         /// <summary>
-        /// 84:継電部初期化失敗
+        /// A8:車両側ATS情報異常
         /// </summary>
-        public RelayInitialzingFailure(int place, string message)
+        public TCSideATSDataAbnormalException(int place, string message)
             : base(place, message)
         {
         }
         /// <summary>
-        /// 84:継電部初期化失敗
+        /// A8:車両側ATS情報異常
         /// </summary>
-        public RelayInitialzingFailure(int place, string message, Exception inner)
+        public TCSideATSDataAbnormalException(int place, string message, Exception inner)
             : base(place, message, inner)
         {
         }
         public override string ToCode()
         {
-            return Place.ToString() + "84";
+            return Place.ToString() + "80";
         }
     }
 }

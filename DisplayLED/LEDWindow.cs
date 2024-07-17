@@ -1,15 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using TatehamaATS.Exceptions;
+﻿using TatehamaATS.Exceptions;
 
 namespace TatehamaATS.DisplayLED
 {
@@ -216,6 +205,11 @@ namespace TatehamaATS.DisplayLED
             {
                 this.Location = new Point(this.Left + e.X - dragStartPoint.X, this.Top + e.Y - dragStartPoint.Y);
             }
+        }
+
+        private void LEDTest_Click(object sender, EventArgs e)
+        {
+            TrainState.ATSLEDTest = true;
         }
     }
 }

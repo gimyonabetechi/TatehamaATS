@@ -32,6 +32,7 @@
             panel1 = new Panel();
             L3 = new PictureBox();
             L2 = new PictureBox();
+            LEDTest = new Button();
             ((System.ComponentModel.ISupportInitialize)L1).BeginInit();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)L3).BeginInit();
@@ -61,7 +62,7 @@
             panel1.Controls.Add(L3);
             panel1.Controls.Add(L1);
             panel1.Controls.Add(L2);
-            panel1.Location = new Point(16, 6);
+            panel1.Location = new Point(36, 6);
             panel1.Name = "panel1";
             panel1.Size = new Size(205, 319);
             panel1.TabIndex = 3;
@@ -101,13 +102,24 @@
             L2.MouseDown += pictureBox1_MouseDown;
             L2.MouseMove += pictureBox1_MouseMove;
             // 
+            // LEDTest
+            // 
+            LEDTest.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            LEDTest.Location = new Point(42, 401);
+            LEDTest.Name = "LEDTest";
+            LEDTest.Size = new Size(16, 16);
+            LEDTest.TabIndex = 4;
+            LEDTest.UseVisualStyleBackColor = true;
+            LEDTest.Click += LEDTest_Click;
+            // 
             // LEDWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(64, 64, 64);
-            ClientSize = new Size(237, 331);
+            ClientSize = new Size(277, 429);
             ControlBox = false;
+            Controls.Add(LEDTest);
             Controls.Add(panel1);
             FormBorderStyle = FormBorderStyle.None;
             MaximizeBox = false;
@@ -130,5 +142,6 @@
         private PictureBox L1;
         private PictureBox L2;
         private PictureBox L3;
+        private Button LEDTest;
     }
 }

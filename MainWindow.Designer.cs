@@ -33,17 +33,13 @@
             TanudenStatus = new ToolStripStatusLabel();
             toolStripStatusLabel2 = new ToolStripStatusLabel();
             SignalStatus = new ToolStripStatusLabel();
+            toolStripStatusLabel3 = new ToolStripStatusLabel();
+            LEDStatus = new ToolStripStatusLabel();
             LEDWindowButton = new Button();
             textBox1 = new TextBox();
             label1 = new Label();
-            ToL1Button = new Button();
-            LEDDisplayNum = new NumericUpDown();
-            ToL2Button = new Button();
-            ToL3Button = new Button();
-            toolStripStatusLabel3 = new ToolStripStatusLabel();
-            LEDStatus = new ToolStripStatusLabel();
+            ATSResetButton = new Button();
             statusStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)LEDDisplayNum).BeginInit();
             SuspendLayout();
             // 
             // statusStrip1
@@ -84,6 +80,20 @@
             SignalStatus.Size = new Size(59, 20);
             SignalStatus.Text = "接続中";
             // 
+            // toolStripStatusLabel3
+            // 
+            toolStripStatusLabel3.BorderSides = ToolStripStatusLabelBorderSides.Left;
+            toolStripStatusLabel3.Name = "toolStripStatusLabel3";
+            toolStripStatusLabel3.Size = new Size(35, 20);
+            toolStripStatusLabel3.Text = "LED";
+            // 
+            // LEDStatus
+            // 
+            LEDStatus.BorderSides = ToolStripStatusLabelBorderSides.Left | ToolStripStatusLabelBorderSides.Right;
+            LEDStatus.Name = "LEDStatus";
+            LEDStatus.Size = new Size(59, 20);
+            LEDStatus.Text = "非表示";
+            // 
             // LEDWindowButton
             // 
             LEDWindowButton.Location = new Point(12, 12);
@@ -110,67 +120,22 @@
             label1.TabIndex = 3;
             label1.Text = "列番設定";
             // 
-            // ToL1Button
+            // ATSResetButton
             // 
-            ToL1Button.Location = new Point(680, 12);
-            ToL1Button.Name = "ToL1Button";
-            ToL1Button.Size = new Size(96, 27);
-            ToL1Button.TabIndex = 4;
-            ToL1Button.Text = "L1表示";
-            ToL1Button.UseVisualStyleBackColor = true;
-            ToL1Button.Click += ToL1Button_Click;
-            // 
-            // LEDDisplayNum
-            // 
-            LEDDisplayNum.Location = new Point(782, 12);
-            LEDDisplayNum.Maximum = new decimal(new int[] { 400, 0, 0, 0 });
-            LEDDisplayNum.Name = "LEDDisplayNum";
-            LEDDisplayNum.Size = new Size(120, 23);
-            LEDDisplayNum.TabIndex = 5;
-            // 
-            // ToL2Button
-            // 
-            ToL2Button.Location = new Point(680, 45);
-            ToL2Button.Name = "ToL2Button";
-            ToL2Button.Size = new Size(96, 27);
-            ToL2Button.TabIndex = 6;
-            ToL2Button.Text = "L2表示";
-            ToL2Button.UseVisualStyleBackColor = true;
-            ToL2Button.Click += ToL2Button_Click;
-            // 
-            // ToL3Button
-            // 
-            ToL3Button.Location = new Point(680, 78);
-            ToL3Button.Name = "ToL3Button";
-            ToL3Button.Size = new Size(96, 27);
-            ToL3Button.TabIndex = 7;
-            ToL3Button.Text = "L2表示";
-            ToL3Button.UseVisualStyleBackColor = true;
-            ToL3Button.Click += ToL3Button_Click;
-            // 
-            // toolStripStatusLabel3
-            // 
-            toolStripStatusLabel3.BorderSides = ToolStripStatusLabelBorderSides.Left;
-            toolStripStatusLabel3.Name = "toolStripStatusLabel3";
-            toolStripStatusLabel3.Size = new Size(35, 20);
-            toolStripStatusLabel3.Text = "LED";
-            // 
-            // LEDStatus
-            // 
-            LEDStatus.BorderSides = ToolStripStatusLabelBorderSides.Left | ToolStripStatusLabelBorderSides.Right;
-            LEDStatus.Name = "LEDStatus";
-            LEDStatus.Size = new Size(59, 20);
-            LEDStatus.Text = "非表示";
+            ATSResetButton.Location = new Point(114, 12);
+            ATSResetButton.Name = "ATSResetButton";
+            ATSResetButton.Size = new Size(93, 50);
+            ATSResetButton.TabIndex = 4;
+            ATSResetButton.Text = "復帰";
+            ATSResetButton.UseVisualStyleBackColor = true;
+            ATSResetButton.Click += ATSResetButton_Click;
             // 
             // MainWindow
             // 
             AutoScaleDimensions = new SizeF(8F, 16F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(914, 480);
-            Controls.Add(ToL3Button);
-            Controls.Add(ToL2Button);
-            Controls.Add(LEDDisplayNum);
-            Controls.Add(ToL1Button);
+            Controls.Add(ATSResetButton);
             Controls.Add(label1);
             Controls.Add(textBox1);
             Controls.Add(LEDWindowButton);
@@ -180,7 +145,6 @@
             Text = "MainWindow";
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)LEDDisplayNum).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -195,11 +159,8 @@
         private Button LEDWindowButton;
         private TextBox textBox1;
         private Label label1;
-        private Button ToL1Button;
-        private NumericUpDown LEDDisplayNum;
-        private Button ToL2Button;
-        private Button ToL3Button;
         private ToolStripStatusLabel toolStripStatusLabel3;
         private ToolStripStatusLabel LEDStatus;
+        private Button ATSResetButton;
     }
 }

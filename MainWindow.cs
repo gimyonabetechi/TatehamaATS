@@ -37,16 +37,13 @@ namespace TatehamaATS
             LEDStatus.Text = controlLED.isShow ? "表　示" : "非表示";
         }
 
-        private void ToL1Button_Click(object sender, EventArgs e)
+        private void ATSResetButton_Click(object sender, EventArgs e)
         {
-        }
-
-        private void ToL2Button_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void ToL3Button_Click(object sender, EventArgs e)
-        {
+            //故障復帰
+            if (TrainState.ATSBroken && TrainState.TrainSpeed < 1.0 && TrainState.TrainBnotch >= 8)
+            {
+                TrainState.ATSBroken = false;
+            }
         }
     }
 }
