@@ -9,6 +9,7 @@ namespace TatehamaATS
     /// </summary>
     internal class Relay
     {
+        public event EventHandler Init;
         internal Relay()
         {
             try
@@ -20,7 +21,6 @@ namespace TatehamaATS
                 new RelayInitialzingFailure(3, "Relay.cs@Relay()", ex);
             }
             Task.Run(() => StartUpdateLoop());
-
         }
 
         /// <summary>
@@ -73,6 +73,10 @@ namespace TatehamaATS
                 {
                     new RelayException(3, "Relay.cs@Elapse()", ex);
                 }
+                if (!(TrainState.gameScreen == GameScreen.MainGame || TrainState.gameScreen == GameScreen.MainGame_Pause))
+                {
+                    TrainState.init();
+                }
                 try
                 {
                     TrainState.TrainSpeed = TC_TrainState.Speed;
@@ -100,6 +104,97 @@ namespace TatehamaATS
                 catch (Exception ex)
                 {
                     new TCSideATSDataAbnormalException(3, "Relay.cs@Elapse()", ex);
+                }
+                if (TrainState.RouteDatabase != null)
+                {
+                    if (TrainState.OnTrackIndex == null)
+                    {
+                        TrainState.OnTrackIndex = 0;
+                        TrainState.BeforeTrack = null;
+                        TrainState.OnTrack = TrainState.RouteDatabase.CircuitList[0];
+                        TrainState.NextTrack = TrainState.RouteDatabase.CircuitList[1];
+                        TrainState.NextNextTrack = TrainState.RouteDatabase.CircuitList[2];
+                    }
+                    var nowDis = TC_TrainState.TotalLength;
+
+                    if (TrainState.OnTrack != null)
+                    {
+                        //現在在線を先頭が越えたら
+                        if (TrainState.OnTrack.EndMeter < nowDis)
+                        {
+                            TrainState.OnTrackIndex++;
+                            if ((int)TrainState.OnTrackIndex - 1 < TrainState.RouteDatabaseCount)
+                            {
+                                TrainState.BeforeTrack = TrainState.RouteDatabase.CircuitList[(int)TrainState.OnTrackIndex - 1];
+                            }
+                            if ((int)TrainState.OnTrackIndex < TrainState.RouteDatabaseCount)
+                            {
+                                TrainState.OnTrack = TrainState.RouteDatabase.CircuitList[(int)TrainState.OnTrackIndex];
+                            }
+                            if ((int)TrainState.OnTrackIndex + 1 < TrainState.RouteDatabaseCount)
+                            {
+                                TrainState.NextTrack = TrainState.RouteDatabase.CircuitList[(int)TrainState.OnTrackIndex + 1];
+                            }
+                            else
+                            {
+                                TrainState.NextTrack = null;
+                            }
+                            if ((int)TrainState.OnTrackIndex + 2 < TrainState.RouteDatabaseCount)
+                            {
+                                TrainState.NextNextTrack = TrainState.RouteDatabase.CircuitList[(int)TrainState.OnTrackIndex + 2];
+                            }
+                            else
+                            {
+                                TrainState.NextNextTrack = null;
+                            }
+                        }
+                        //在線を先頭が踏んで戻ったら 
+                        if (TrainState.OnTrack.StartMeter > nowDis && TrainState.BeforeTrack == null)
+                        {
+                            TrainState.OnTrackIndex--;
+                            if ((int)TrainState.OnTrackIndex - 1 < TrainState.RouteDatabaseCount)
+                            {
+                                TrainState.BeforeTrack = TrainState.RouteDatabase.CircuitList[(int)TrainState.OnTrackIndex - 1];
+                            }
+                            if ((int)TrainState.OnTrackIndex < TrainState.RouteDatabaseCount)
+                            {
+                                TrainState.OnTrack = TrainState.RouteDatabase.CircuitList[(int)TrainState.OnTrackIndex];
+                            }
+                            if ((int)TrainState.OnTrackIndex + 1 < TrainState.RouteDatabaseCount)
+                            {
+                                TrainState.NextTrack = TrainState.RouteDatabase.CircuitList[(int)TrainState.OnTrackIndex + 1];
+                            }
+                            else
+                            {
+                                TrainState.NextTrack = null;
+                            }
+                            if ((int)TrainState.OnTrackIndex + 2 < TrainState.RouteDatabaseCount)
+                            {
+                                TrainState.NextNextTrack = TrainState.RouteDatabase.CircuitList[(int)TrainState.OnTrackIndex + 2];
+                            }
+                            else
+                            {
+                                TrainState.NextNextTrack = null;
+                            }
+                        }
+                        //在線を最後尾が踏んで戻ったら 
+                        if (TrainState.OnTrack.StartMeter > nowDis - TrainState.TrainLength && TrainState.BeforeTrack == null)
+                        {
+                            TrainState.BeforeTrack = TrainState.RouteDatabase.CircuitList[(int)TrainState.OnTrackIndex - 1];
+                        }
+                    }
+                    if (TrainState.BeforeTrack != null)
+                    {
+                        //前在線を最後尾が抜けたら  
+                        if (TrainState.BeforeTrack.EndMeter < nowDis - TrainState.TrainLength)
+                        {
+                            TrainState.BeforeTrack = null;
+                        }
+                    }
+                }
+                else
+                {
+                    TrainState.OnTrackIndex = null;
                 }
             }
             catch (Exception ex)

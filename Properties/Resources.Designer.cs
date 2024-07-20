@@ -63,6 +63,76 @@ namespace TatehamaATS.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.Drawing.Bitmap _2y_n {
+            get {
+                object obj = ResourceManager.GetObject("_2y_n", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _2y_r {
+            get {
+                object obj = ResourceManager.GetObject("_2y_r", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _2y_y {
+            get {
+                object obj = ResourceManager.GetObject("_2y_y", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _3_g {
+            get {
+                object obj = ResourceManager.GetObject("_3_g", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _3_n {
+            get {
+                object obj = ResourceManager.GetObject("_3_n", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _3_r {
+            get {
+                object obj = ResourceManager.GetObject("_3_r", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _3_y {
+            get {
+                object obj = ResourceManager.GetObject("_3_y", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.Drawing.Bitmap _3B1 {
             get {
                 object obj = ResourceManager.GetObject("3B1", resourceCulture);
@@ -73,9 +143,548 @@ namespace TatehamaATS.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.Drawing.Bitmap _3nb_g {
+            get {
+                object obj = ResourceManager.GetObject("_3nb_g", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _3nb_n {
+            get {
+                object obj = ResourceManager.GetObject("_3nb_n", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _3nb_r {
+            get {
+                object obj = ResourceManager.GetObject("_3nb_r", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _3nb_y {
+            get {
+                object obj = ResourceManager.GetObject("_3nb_y", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _4yg_g {
+            get {
+                object obj = ResourceManager.GetObject("_4yg_g", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _4yg_n {
+            get {
+                object obj = ResourceManager.GetObject("_4yg_n", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _4yg_r {
+            get {
+                object obj = ResourceManager.GetObject("_4yg_r", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _4yg_y {
+            get {
+                object obj = ResourceManager.GetObject("_4yg_y", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _4yg_yg {
+            get {
+                object obj = ResourceManager.GetObject("_4yg_yg", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _4ygnb_g {
+            get {
+                object obj = ResourceManager.GetObject("_4ygnb_g", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _4ygnb_n {
+            get {
+                object obj = ResourceManager.GetObject("_4ygnb_n", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _4ygnb_r {
+            get {
+                object obj = ResourceManager.GetObject("_4ygnb_r", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _4ygnb_y {
+            get {
+                object obj = ResourceManager.GetObject("_4ygnb_y", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _4ygnb_yg {
+            get {
+                object obj = ResourceManager.GetObject("_4ygnb_yg", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _4ygrl_g {
+            get {
+                object obj = ResourceManager.GetObject("_4ygrl_g", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _4ygrl_n {
+            get {
+                object obj = ResourceManager.GetObject("_4ygrl_n", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _4ygrl_r {
+            get {
+                object obj = ResourceManager.GetObject("_4ygrl_r", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _4ygrl_y {
+            get {
+                object obj = ResourceManager.GetObject("_4ygrl_y", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _4ygrl_yg {
+            get {
+                object obj = ResourceManager.GetObject("_4ygrl_yg", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _4yy_g {
+            get {
+                object obj = ResourceManager.GetObject("_4yy_g", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _4yy_n {
+            get {
+                object obj = ResourceManager.GetObject("_4yy_n", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _4yy_r {
+            get {
+                object obj = ResourceManager.GetObject("_4yy_r", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _4yy_y {
+            get {
+                object obj = ResourceManager.GetObject("_4yy_y", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _4yy_yy {
+            get {
+                object obj = ResourceManager.GetObject("_4yy_yy", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _4yyng_n {
+            get {
+                object obj = ResourceManager.GetObject("_4yyng_n", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _4yyng_r {
+            get {
+                object obj = ResourceManager.GetObject("_4yyng_r", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _4yyng_y {
+            get {
+                object obj = ResourceManager.GetObject("_4yyng_y", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _4yyng_yy {
+            get {
+                object obj = ResourceManager.GetObject("_4yyng_yy", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _4yyngnb_n {
+            get {
+                object obj = ResourceManager.GetObject("_4yyngnb_n", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _4yyngnb_r {
+            get {
+                object obj = ResourceManager.GetObject("_4yyngnb_r", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _4yyngnb_y {
+            get {
+                object obj = ResourceManager.GetObject("_4yyngnb_y", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _4yyngnb_yy {
+            get {
+                object obj = ResourceManager.GetObject("_4yyngnb_yy", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _4yyngrl_n {
+            get {
+                object obj = ResourceManager.GetObject("_4yyngrl_n", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _4yyngrl_r {
+            get {
+                object obj = ResourceManager.GetObject("_4yyngrl_r", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _4yyngrl_y {
+            get {
+                object obj = ResourceManager.GetObject("_4yyngrl_y", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _4yyngrl_yy {
+            get {
+                object obj = ResourceManager.GetObject("_4yyngrl_yy", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _5yg_g {
+            get {
+                object obj = ResourceManager.GetObject("_5yg_g", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _5yg_n {
+            get {
+                object obj = ResourceManager.GetObject("_5yg_n", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _5yg_r {
+            get {
+                object obj = ResourceManager.GetObject("_5yg_r", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _5yg_y {
+            get {
+                object obj = ResourceManager.GetObject("_5yg_y", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _5yg_yg {
+            get {
+                object obj = ResourceManager.GetObject("_5yg_yg", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _5yg_yy {
+            get {
+                object obj = ResourceManager.GetObject("_5yg_yy", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.IO.MemoryStream に類似した型 System.IO.UnmanagedMemoryStream のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream ATS_EB {
+            get {
+                return ResourceManager.GetStream("ATS_EB", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.Drawing.Bitmap ATS_LED2 {
             get {
                 object obj = ResourceManager.GetObject("ATS_LED2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.IO.MemoryStream に類似した型 System.IO.UnmanagedMemoryStream のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream ATS_Papproach {
+            get {
+                return ResourceManager.GetStream("ATS_Papproach", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   System.IO.MemoryStream に類似した型 System.IO.UnmanagedMemoryStream のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream ATS_Pbrake {
+            get {
+                return ResourceManager.GetStream("ATS_Pbrake", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   System.IO.MemoryStream に類似した型 System.IO.UnmanagedMemoryStream のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream ATS_sta {
+            get {
+                return ResourceManager.GetStream("ATS_sta", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   System.IO.MemoryStream に類似した型 System.IO.UnmanagedMemoryStream のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream ATS20 {
+            get {
+                return ResourceManager.GetStream("ATS20", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   System.IO.MemoryStream に類似した型 System.IO.UnmanagedMemoryStream のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream ATS30 {
+            get {
+                return ResourceManager.GetStream("ATS30", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   System.IO.MemoryStream に類似した型 System.IO.UnmanagedMemoryStream のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream ATScheck {
+            get {
+                return ResourceManager.GetStream("ATScheck", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   System.IO.MemoryStream に類似した型 System.IO.UnmanagedMemoryStream のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream ATSup {
+            get {
+                return ResourceManager.GetStream("ATSup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   System.IO.MemoryStream に類似した型 System.IO.UnmanagedMemoryStream のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream beep1 {
+            get {
+                return ResourceManager.GetStream("beep1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   System.IO.MemoryStream に類似した型 System.IO.UnmanagedMemoryStream のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream beep2 {
+            get {
+                return ResourceManager.GetStream("beep2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   System.IO.MemoryStream に類似した型 System.IO.UnmanagedMemoryStream のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream beep3 {
+            get {
+                return ResourceManager.GetStream("beep3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap co_i {
+            get {
+                object obj = ResourceManager.GetObject("co_i", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap co_n {
+            get {
+                object obj = ResourceManager.GetObject("co_n", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -96,6 +705,153 @@ namespace TatehamaATS.Properties {
         internal static System.Drawing.Bitmap Null {
             get {
                 object obj = ResourceManager.GetObject("Null", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap pr_l {
+            get {
+                object obj = ResourceManager.GetObject("pr_l", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap pr_n {
+            get {
+                object obj = ResourceManager.GetObject("pr_n", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap pr_r {
+            get {
+                object obj = ResourceManager.GetObject("pr_r", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap pr_s {
+            get {
+                object obj = ResourceManager.GetObject("pr_s", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap rp_g {
+            get {
+                object obj = ResourceManager.GetObject("rp_g", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap rp_n {
+            get {
+                object obj = ResourceManager.GetObject("rp_n", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap rp_r {
+            get {
+                object obj = ResourceManager.GetObject("rp_r", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap rp_y {
+            get {
+                object obj = ResourceManager.GetObject("rp_y", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.IO.MemoryStream に類似した型 System.IO.UnmanagedMemoryStream のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream set_complete {
+            get {
+                return ResourceManager.GetStream("set_complete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   System.IO.MemoryStream に類似した型 System.IO.UnmanagedMemoryStream のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream set_trainnum {
+            get {
+                return ResourceManager.GetStream("set_trainnum", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   System.IO.MemoryStream に類似した型 System.IO.UnmanagedMemoryStream のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream set_trainsetlen {
+            get {
+                return ResourceManager.GetStream("set_trainsetlen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap sh_n {
+            get {
+                object obj = ResourceManager.GetObject("sh_n", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap sh_r {
+            get {
+                object obj = ResourceManager.GetObject("sh_r", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap sh_y {
+            get {
+                object obj = ResourceManager.GetObject("sh_y", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap signull {
+            get {
+                object obj = ResourceManager.GetObject("signull", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>OpenTetsu.Commons</RootNamespace>
+        <Version>1.0.1</Version>
+        
+        <AssemblyName>OpenTetsuAPI_Commons</AssemblyName>
+        <Product>OpenTetsu API</Product>
+        <Company>Tanukigawa Dentetsu</Company>
+        <Copyright>2024, Haruyuki Tanukiji, under Mozilla Public License 2.0 (MPL-2.0)</Copyright>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    </ItemGroup>
+
+</Project>

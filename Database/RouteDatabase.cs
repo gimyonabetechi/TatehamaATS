@@ -8,11 +8,11 @@ using TatehamaATS.Exceptions;
 
 namespace TatehamaATS.Database
 {
-    internal class RouteDatabase
+    public class RouteDatabase
     {
-        internal List<TrackCircuitInfo> CircuitList { get; private set; } = new List<TrackCircuitInfo>();
+        public List<TrackCircuitInfo> CircuitList { get; private set; }
 
-        internal RouteDatabase()
+        public RouteDatabase()
         {
             try
             {
@@ -22,6 +22,35 @@ namespace TatehamaATS.Database
             {
                 new OnCarDBTrackDataAbnormal(3, "RouteDatabase.cs@RouteDatabase()", ex);
             }
+        }
+        public void AddTrack(TrackCircuitInfo trackCircuitInfo)
+        {
+            CircuitList.Add(trackCircuitInfo);
+        }
+
+        public void SetSignalLight(string SignalName, SignalLight signal)
+        {
+            try
+            {
+                var info = CircuitList.Find(x => x.Name == SignalName);
+                if (info != null)
+                {
+                    info.Signal = signal;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new DBTrackDataChengeAbnormal(3, "RouteDatabase.cs@SetSignalLight()");
+            }
+        }
+        public override string ToString()
+        {
+            string Text = "軌道回路情報：\n";
+            foreach (var c in CircuitList)
+            {
+                Text += $"　{c}\n";
+            }
+            return Text;
         }
     }
 }

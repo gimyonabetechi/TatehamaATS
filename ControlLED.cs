@@ -19,7 +19,7 @@ namespace TatehamaATS
             try
             {
                 ledWindow = new LEDWindow();
-                LEDHide();
+                LEDShow();
             }
             catch (Exception ex)
             {
@@ -68,6 +68,7 @@ namespace TatehamaATS
                     // ここで例外をキャッチしてログなどに出力する     
                     TrainState.ATSBroken = true;
                     Debug.WriteLine($"故障");
+                    Debug.WriteLine($"{ex.Message} {ex.InnerException}");
                     TrainState.ATSDisplay?.SetLED("", "");
                     TrainState.ATSDisplay?.AddState(ex.ToCode());
                     Debug.WriteLine($"{ex.Message}");
@@ -76,7 +77,8 @@ namespace TatehamaATS
                 {
                     // 他の例外もキャッチしてログなどに出力する    
                     TrainState.ATSBroken = true;
-                    Debug.WriteLine($"{ex.Message}");
+                    Debug.WriteLine($"故障");
+                    Debug.WriteLine($"{ex.Message} {ex.InnerException}");
                     var e = new LEDControlException(3, "", ex);
                     TrainState.ATSDisplay?.SetLED("", "");
                     TrainState.ATSDisplay?.AddState(e.ToCode());
@@ -90,7 +92,7 @@ namespace TatehamaATS
         /// </summary>
         private void UpdateDisplay()
         {
-            Debug.WriteLine(TrainState.ATSDisplay);
+            //Debug.WriteLine(TrainState.ATSDisplay);
             if (TrainState.ATSLEDTest)
             {
                 if (TestStart == DateTime.MinValue)
@@ -99,9 +101,9 @@ namespace TatehamaATS
                 }
                 var deltaT = DateTime.Now - TestStart;
 
-                var LED = deltaT.Seconds / 2 % 3 + 24;
-                var Place = deltaT.Seconds / 2 / 3 % 3 + 1;
-                if (deltaT < TimeSpan.FromSeconds(18))
+                var LED = deltaT.Seconds % 3 + 24;
+                var Place = deltaT.Seconds / 3 % 3 + 1;
+                if (deltaT < TimeSpan.FromSeconds(9))
                 {
                     ledWindow.DisplayImage(Place, LED);
                     if (Place == 1)
@@ -143,7 +145,6 @@ namespace TatehamaATS
                             L3Start = TrainState.NowTime;
                         }
                         l3Index = (int)((TrainState.NowTime - L3Start).TotalSeconds * 2 + 1) % display.L3.Count;
-                        Debug.WriteLine(TrainState.NowTime);
                         ledWindow.DisplayImage(3, ConvertToLEDNumber(display.L3[l3Index]));
 
                         //L3に数値赤要素があるとき
