@@ -25,7 +25,7 @@ namespace TatehamaATS
         {
             _client = new HttpClient
             {
-                BaseAddress = new Uri("http://127.0.0.1:58680/tanuden-api/")
+                BaseAddress = new Uri("http://127.0.0.1:58680/tanuden-api")
             };
 
 
