@@ -26,7 +26,7 @@ namespace TatehamaATS
         {
             _client = new HttpClient
             {
-                BaseAddress = new Uri("http://127.0.0.1:58680/tanuden-api")
+                BaseAddress = new Uri("http://127.0.0.1:58680")
             };
             Task.Run(async () =>
             {
@@ -90,7 +90,7 @@ namespace TatehamaATS
         /// <returns>API情報を含む文字列。</returns>
         public async Task<string> GetApiInfoAsync()
         {
-            HttpResponseMessage response = await _client.GetAsync("/");
+            HttpResponseMessage response = await _client.GetAsync("/tanuden-api");
             response.EnsureSuccessStatusCode();
             string responseBody = await response.Content.ReadAsStringAsync();
             return responseBody;
@@ -102,7 +102,7 @@ namespace TatehamaATS
         /// <returns>プラグインリストを含む文字列。</returns>
         public async Task<string> GetPluginsAsync()
         {
-            HttpResponseMessage response = await _client.GetAsync("/plugins");
+            HttpResponseMessage response = await _client.GetAsync("/tanuden-api/plugins");
             response.EnsureSuccessStatusCode();
             string responseBody = await response.Content.ReadAsStringAsync();
             return responseBody;
@@ -116,9 +116,13 @@ namespace TatehamaATS
         public async Task<string> RegisterPluginAsync(object plugin)
         {
             var content = new StringContent(JsonSerializer.Serialize(plugin), Encoding.UTF8, "application/json");
-            HttpResponseMessage response = await _client.PostAsync("/plugins", content);
-            response.EnsureSuccessStatusCode();
+            HttpResponseMessage response = await _client.PostAsync("/tanuden-api/plugins", content);
             string responseBody = await response.Content.ReadAsStringAsync();
+            if(response.StatusCode == System.Net.HttpStatusCode.Conflict)
+            {
+                return responseBody;
+            }
+            response.EnsureSuccessStatusCode();
             return responseBody;
         }
 
@@ -130,7 +134,7 @@ namespace TatehamaATS
         public async Task<string> SendPluginDataAsync(object pluginData)
         {
             var content = new StringContent(JsonSerializer.Serialize(pluginData), Encoding.UTF8, "application/json");
-            HttpResponseMessage response = await _client.PostAsync("/plugins/data", content);
+            HttpResponseMessage response = await _client.PostAsync("/tanuden-api/plugins/data", content);
             response.EnsureSuccessStatusCode();
             string responseBody = await response.Content.ReadAsStringAsync();
             return responseBody;
@@ -145,7 +149,7 @@ namespace TatehamaATS
         {
             await _tcs.Task;
             var content = new StringContent(JsonSerializer.Serialize(pluginData), Encoding.UTF8, "application/json");
-            HttpResponseMessage response = await _client.PostAsync("/plugins/override_diagram", content);
+            HttpResponseMessage response = await _client.PostAsync("/tanuden-api/plugins/override_diagram", content);
             string responseBody = await response.Content.ReadAsStringAsync();
             response.EnsureSuccessStatusCode();
             return responseBody;
