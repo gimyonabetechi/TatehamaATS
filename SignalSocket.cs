@@ -256,6 +256,8 @@ namespace TatehamaATS
                         signalLight = SignalLight.YG; break;
                     case "G":
                         signalLight = SignalLight.G; break;
+                    case "SwitchG":
+                        signalLight = SignalLight.SwitchG; break;
                     default:
                         signalLight = SignalLight.N; break;
 

@@ -228,7 +228,7 @@ namespace TatehamaATS.Signal
                         case SignalLight.R:
                             SignaiPic.BackgroundImage = Properties.Resources.sh_r;
                             break;
-                        case SignalLight.G:
+                        case SignalLight.SwitchG:
                             SignaiPic.BackgroundImage = Properties.Resources.sh_y;
                             break;
                         default:

@@ -119,6 +119,7 @@ namespace TatehamaATS
             HttpResponseMessage response = await _client.PostAsync("/plugins", content);
             string responseBody = await response.Content.ReadAsStringAsync();
             Debug.WriteLine(responseBody);
+            Debug.WriteLine(response);
             response.EnsureSuccessStatusCode();
             return responseBody;
         }
