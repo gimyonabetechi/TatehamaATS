@@ -1,0 +1,239 @@
+<body>
+
+<h1>TrainCrewInputクラス</h1>
+
+<font color=blue>void</font> <font color=green>TrainCrewInput</font>.Init();
+<br>
+起動時に呼び出します。
+<br>
+<br>
+<br>
+<font color=blue>void</font> <font color=green>TrainCrewInput</font>.RequestData(DataRequest req);
+<br>
+信号機やスイッチの状態など追加の情報を取得したい場合に呼び出します。<br>
+GameScreenの変化時に呼び出すのをお勧めします。<br>
+DataRequest req:取得したいデータの種類（ビットフラグ）
+<br>
+<br>
+<br>
+<font color=blue>void</font> <font color=green>TrainCrewInput</font>.SetNotch(int notch);
+<br>
+ノッチを入力します。変化時のみの呼び出しで問題ありません。<br>
+力行側は正の値、制動側は負の値で入力します
+<br>
+int notch：ノッチに対応する値<br>
+EB:-8<br>
+B6:-7<br>
+B1:-2<br>
+抑速:-1<br>
+N:0<br>
+P1:1<br>
+P5:5
+<br>
+<br>
+<br>
+<font color=blue>void</font> <font color=green>TrainCrewInput</font>.SetReverser(int dir);
+<br>
+レバーサを入力します。変化時のみの呼び出しで問題ありません。<br>
+int dir：レバーサに対応する値<br>
+ 1:前進<br>
+ 0:中立<br>
+-1:後進<br>
+<br>
+<br>
+<font color=blue>void</font> <font color=green>TrainCrewInput</font>.SetButton(InputAction action, bool on);
+<br>
+ボタンやスイッチの状態を入力します。
+<br>
+<br>
+<br>
+<br>
+<font color=green>TrainState</font> <font color=green>TrainCrewInput</font>.GetTrainState();
+<br>
+運転列車の状態を取得します。
+<br>
+<br>
+<br>
+<br>
+<font color=blue>void</font> <font color=green>TrainCrewInput</font>.SetWiper(int state);
+<br>
+ワイパーの設定をします。変化時のみの呼び出しで問題ありません。<br>
+int state：ワイパー設定に対応する値<br>
+0:OFF<br>
+1:間欠<br>
+2:低速<br>
+3:高速<br>
+<br>
+<br>
+<br>
+<font color=blue>void</font> <font color=green>TrainCrewInput</font>.SetATO_Notch(int notch);
+<br>
+ATO用のノッチを入力します。変化時のみの呼び出しで問題ありません。<br>
+力行側は正の値、制動側は負の値で入力します<br>
+・ATO力行ノッチ(notch>0のとき)<br>
+→手動マスコンがNのときのみATO力行ノッチを適用。<br>
+　例えばATOP5、手動P1の時は手動のP1となる<br>
+・ATOブレーキノッチ(notch<0のとき)<br>
+→手動ノッチとATOノッチのうち大きい方が適用<br>
+int notch：ノッチに対応する値<br>
+EB:-8<br>
+B6:-7<br>
+B1:-2<br>
+抑速:-1<br>
+N:0<br>
+P1:1<br>
+P5:5
+<br>
+<br>
+<br>
+<font color=blue>void</font> <font color=green>TrainCrewInput</font>.RequestStaData();
+<br>
+駅情報リストの送信を要求します。<br>
+※更新は数フレーム後になることがあります。<br>
+<br>
+<br>
+<br>
+<br>
+<font color=blue>void</font> <font color=green>TrainCrewInput</font>.Dispose();
+<br>
+終了時に呼び出します。
+<br>
+<br>
+<br>
+<br>
+<font color=green>GameState</font> <font color=green>TrainCrewInput</font>.gameState
+<br>
+ゲーム状態を取得できます。
+<br>
+<br>
+<br>
+<font color=green>List&lt;SignalInfo&gt;</font> <font color=green>TrainCrewInput</font>.signals
+<br>
+次の信号機の状態を取得できます。<br>
+取得できるのは信号喚呼位置標通過後です。
+<br>
+<br>
+<br>
+<font color=green>TrainSwitch</font> <font color=green>TrainCrewInput</font>.trainSwitch
+<br>
+警笛などの操作の状態を取得できます。
+<br>
+<br>
+<br>
+
+<h1>TrainStateクラス</h1>
+
+public float Speed; //運転速度(km/h)<br>
+public bool AllClose; //戸閉<br>
+public float MR_Press; //MR圧力<br>
+public List&lt;CarState&gt; CarStates; //各車の情報<br>
+<br>
+public Dictionary&lt;PanelLamp, bool&gt; Lamps; //運転台表示灯状態<br>
+public string ATS_Class; //ATS表示器の種別表示<br>
+public string ATS_Speed; //ATS表示器の速度表示<br>
+public string ATS_State; //ATS表示器の状態表示<br>
+<br>
+//ダイヤ情報<br>
+public TimeSpan NowTime; //現在時刻<br>
+public string diaName; //列車番号<br>
+public string Class; //種別<br>
+public string BoundFor; //行先<br>
+public List&lt;Station&gt; stationList; //各駅の情報<br>
+public int nowStaIndex; //次駅のインデックス（stationList用）
+<br>
+//走行情報<br>
+public float nextUIDistance; //ゲームUIに表示している残り距離<br>
+public float nextStaDistance; //次駅までの残り距離<br>
+public string nextStaName; //次の駅名<br>
+public string nextStopType; //次の駅の停車・通過<br>
+public float speedLimit; //現在の制限速度<br>
+public float nextSpeedLimit; //次の制限速度（ゲームUIに表示のない時は-1になります）<br>
+public float nextSpeedLimitDistance; //次の制限速度までの距離（ゲームUIに表示のない時は-1になります）<br>
+public float gradient; //勾配（‰）<br>
+public int Pnotch; //現在のマスコンの値<br>
+public int Bnotch; //現在のブレーキの値<br>
+public int Reverser; //現在のレバーサの値<br>
+<br>
+<br>
+
+<h1>CarStateクラス</h1>
+public bool DoorClose; //戸閉<br>
+public float BC_Press; //BC圧力<br>
+public float Ampare; //電流<br>
+<br><br>
+
+<h1>Stationクラス</h1>
+public string Name; //駅名<br>
+public string StopPosName; //停止位置名（駅・番線・上下）<br>
+public TimeSpan ArvTime; //到着時刻<br>
+public TimeSpan DepTime; //出発時刻<br>
+public DoorDir doorDir; //ドアの開扉方向<br>
+public StopType stopType; //停車か通過か<br>
+public float TotalLength; //開始位置からの距離<br>
+<br><br>
+
+<h1>enum InputAction</h1>
+NotchUp, //力行側へ1段<br>
+NotchDw, //制動側へ1段<br>
+NotchN, //ノッチをNにする<br>
+NotchToN, //ノッチをN側へ1段<br>
+NotchEB, //EBノッチ<br>
+NotchB1, //B1ノッチ<br>
+GradientStart, //勾配起動スイッチ<br>
+Buzzer, //連絡ブザ<br>
+HornAir, //空笛<br>
+HornEle, //電笛<br>
+ViewChange, //外部視点との切り替え<br>
+PauseMenu, //ポーズメニュー<br>
+ViewDiagram, //スタフの表示非表示<br>
+ViewUserInterface, //画面表示の表示非表示<br>
+ViewHome, //視点の回転をリセット<br>
+EBReset, //EBをリセット<br>
+DriverViewR, //右側へ視点移動<br>
+DriverViewL, //左側へ視点移動<br>
+DriverViewC, //運転席へ視点移動<br>
+LightLow, //前灯減光<br>
+DoorOpn, //ドア開扉<br>
+DoorCls, //ドア閉扉<br>
+ReOpenSW, //再開閉SW<br>
+JoukouSokusin, //乗降促進SW<br>
+DoorKey, //ドアスイッチ鍵操作<br>
+Housou, //車内放送再生<br>
+ConductorViewB, //後方確認<br>
+<br><br>
+<h1>GameStateクラス</h1>
+
+public GameScreen gameScreen; //現在のゲーム画面<br>
+public CrewType crewType; //運転士・車掌などの区分<br>
+public DriveMode driveMode; //現在のゲームモード<br>
+
+<br><br>
+<h1>enum GameScreen</h1>
+MainGame,<br>
+MainGame_Pause,<br>
+MainGame_Loading,<br>
+Menu,<br>
+Result,<br>
+Title,<br>
+Other,<br>
+NotRunningGame,<br>
+
+<br><br>
+<h1>enum CrewType</h1>
+Driver,<br>
+Conductor,<br>
+
+<br><br>
+<h1>enum DriveMode</h1>
+Normal,<br>
+Free,<br>
+RTA,<br>
+
+<br><br>
+<h1>enum DataRequest</h1>
+None,<br>
+Signal,<br>
+Switch,<br>
+
+<br><br><br><br>
+</body>

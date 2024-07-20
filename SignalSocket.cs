@@ -8,23 +8,82 @@ using SocketIO.Serializer.SystemTextJson;
 
 namespace TatehamaATS
 {
-
     internal class SignalSocket
     {
-
         private SocketIOClient.SocketIO client;
         private bool isSocketConnect;
         internal SignalSocket()
         {
             isSocketConnect = false;
             // Todo: Dev/Prod変更できるようにする
-            client = new SocketIOClient.SocketIO("https://kesigomon.com:62356");
+            client = new SocketIOClient.SocketIO(Program.ServerAddress);
             var config = new JsonSerializerOptions();
             config.Converters.Add(new JsonStringEnumConverter());
             client.Serializer = new SystemTextJsonSerializer(config);
 
             Task.Run(() => ConnectAndProcessAsync());
             Task.Run(() => UpdateLoop());
+        }
+
+
+        internal async Task enterSignal(TrackCircuitInfo? track)
+        {
+            if (TrainState.TrainDiaName == null || TrainState.TrainDiaName == "" || track == null)
+            {
+                Debug.WriteLine("return");
+                return;
+            }
+            Debug.WriteLine($"進入：{track}");
+            try
+            {
+                //こっからフレーム処理
+                var data = new CommonData
+                {
+                    diaName = TrainState.TrainDiaName,
+                    signalName = track.Name
+                };
+                await client.EmitAsync("enterSignal", data);
+                // 念の為明示的にイベントを解除
+                client.Off("elapsed");
+            }
+            catch (TimeoutException ex)
+            {
+                throw new SocketTimeOutException(3, "SignalSocket.cs@enterSignal()", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new SocketException(3, "SignalSocket.cs@enterSignal()", ex);
+            }
+        }
+
+        internal async Task leaveSignal(TrackCircuitInfo track)
+        {
+            if (TrainState.TrainDiaName == null || TrainState.TrainDiaName == "" || track == null)
+            {
+                Debug.WriteLine("return");
+                return;
+            }
+            Debug.WriteLine($"進出：{track}");
+            try
+            {
+                //こっからフレーム処理
+                var data = new CommonData
+                {
+                    diaName = TrainState.TrainDiaName,
+                    signalName = track.Name
+                };
+                await client.EmitAsync("leaveSignal", data);
+                // 念の為明示的にイベントを解除
+                client.Off("elapsed");
+            }
+            catch (TimeoutException ex)
+            {
+                throw new SocketTimeOutException(3, "SignalSocket.cs@enterSignal()", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new SocketException(3, "SignalSocket.cs@enterSignal()", ex);
+            }
         }
 
         private async Task ConnectAndProcessAsync()
@@ -40,6 +99,12 @@ namespace TatehamaATS
                 return;
             }
             var diaName = TrainState.TrainDiaName;
+
+            //非プレイアブル列番対照表に従って置換
+            if (RetsubanTable.ContainsKey(diaName))
+            {
+                diaName = RetsubanTable[diaName];
+            }
             await client.EmitAsync("getRoute", diaName);
             var ecs = new TaskCompletionSource<List<RawTrackCircuitInfo>>();
             client.On("getRouteResult", response =>
@@ -63,6 +128,7 @@ namespace TatehamaATS
                 //TrainState.RouteDatabase.AddTrack(new TrackCircuitInfo("最終在線", route[route.Count - 1].endMeter,100000d, SignalLight.N, SignalType.Yudo_2));
                 TrainState.chengeDiaName = false;
                 TrainState.RouteDatabaseCount = TrainState.RouteDatabase.CircuitList.Count;
+                TrainState.OnTrackIndex = null;
                 Debug.WriteLine(TrainState.RouteDatabase);
             }
             catch (TimeoutException ex)
@@ -144,6 +210,7 @@ namespace TatehamaATS
                 await timer;
             }
         }
+
 
         private async Task Elapse()
         {
@@ -260,6 +327,10 @@ namespace TatehamaATS
                 throw new SocketException(3, "SignalSocket.cs@Elapse()", ex);
             }
         }
+
+        private Dictionary<string, string> RetsubanTable  = new Dictionary<string, string> {
+            {"回1013A", "回1105A"},
+        };
     }
 
     class CommonData

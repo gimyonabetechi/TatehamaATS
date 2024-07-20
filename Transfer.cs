@@ -16,7 +16,7 @@ namespace TatehamaATS
     /// </summary>
     public class Transfer
     {
-        private readonly HttpClient _client;
+        private HttpClient _client;
 
         /// <summary>
         /// Transfer クラスのインスタンスを初期化する。
@@ -27,8 +27,6 @@ namespace TatehamaATS
             {
                 BaseAddress = new Uri("http://127.0.0.1:58680/tanuden-api")
             };
-
-
         }
 
         public async Task PostPIData()
@@ -54,12 +52,9 @@ namespace TatehamaATS
                 var pluginData = new
                 {
                     uid = "TAKUMITE_TRAINCREW_MULTI_ATS",
-                    __overrideData = new OpenTetsuData()
-                    {
-                        DiagramNumber = TrainState.TrainDiaName
-                    }
+                    diagramNumber = TrainState.TrainDiaName
                 };
-                string dataResponse = await SendPluginDataAsync(pluginData);
+                string dataResponse = await SendRetsubanDataAsync(pluginData);
             }
             catch (ATSCommonException ex)
             {
@@ -130,6 +125,20 @@ namespace TatehamaATS
         {
             var content = new StringContent(JsonSerializer.Serialize(pluginData), Encoding.UTF8, "application/json");
             HttpResponseMessage response = await _client.PostAsync("/plugins/data", content);
+            response.EnsureSuccessStatusCode();
+            string responseBody = await response.Content.ReadAsStringAsync();
+            return responseBody;
+        }
+
+        /// <summary>
+        /// プラグインのデータを送信するメソッド。
+        /// </summary>
+        /// <param name="pluginData">送信するプラグインデータ。</param>
+        /// <returns>レスポンスを含む文字列。</returns>
+        public async Task<string> SendRetsubanDataAsync(object pluginData)
+        {
+            var content = new StringContent(JsonSerializer.Serialize(pluginData), Encoding.UTF8, "application/json");
+            HttpResponseMessage response = await _client.PostAsync("/plugins/override_diagram", content);
             response.EnsureSuccessStatusCode();
             string responseBody = await response.Content.ReadAsStringAsync();
             return responseBody;
