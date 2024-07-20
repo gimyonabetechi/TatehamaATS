@@ -15,7 +15,7 @@ namespace TatehamaATS
     {
         internal Label RetsubanText;
         internal Label CarText;
-        private int NowSelect;
+        internal int NowSelect;
         SoundPlayer set_trainnum = new SoundPlayer(Properties.Resources.set_trainnum);
         SoundPlayer set_trainsetlen = new SoundPlayer(Properties.Resources.set_trainsetlen);
         SoundPlayer set_complete = new SoundPlayer(Properties.Resources.set_complete);
@@ -27,8 +27,7 @@ namespace TatehamaATS
         {
             this.RetsubanText = RetsubanText;
             this.CarText = CarText;
-            NowSelect = 1;
-            PlayLoopingSound(set_trainnum);
+            MainWindow.retsuban?.Init();
         }
 
         public void addText(string text)
@@ -184,6 +183,13 @@ namespace TatehamaATS
 
 
         public void Init()
+        {
+            NowSelect = 0;
+            RetsubanText.Text = "";
+            CarText.Text = "";
+            PlaySound(beep3);
+        }
+        public void Load()
         {
             NowSelect = 1;
             RetsubanText.Text = "";

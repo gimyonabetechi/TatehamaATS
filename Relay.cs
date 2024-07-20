@@ -28,11 +28,9 @@ namespace TatehamaATS
         /// </summary>
         private async void StartUpdateLoop()
         {
-
-
             while (true)
             {
-                var timer = Task.Delay(15);
+                var timer = Task.Delay(20);
                 try
                 {
                     Elapse();
@@ -75,7 +73,25 @@ namespace TatehamaATS
                 }
                 if (!(TrainState.gameScreen == GameScreen.MainGame || TrainState.gameScreen == GameScreen.MainGame_Pause))
                 {
+                    if (TrainState.RouteDatabase != null)
+                    {
+                        foreach (var track in TrainState.RouteDatabase.CircuitList)
+                        {
+                            _ = MainWindow.signalSocket.leaveSignal(track);
+                        }
+                        if (MainWindow.retsuban != null && MainWindow.retsuban.NowSelect != 0)
+                        {
+                            MainWindow.retsuban.Init();
+                        }
+                    }
                     TrainState.init();
+                }
+                else
+                {
+                    if (MainWindow.retsuban != null && MainWindow.retsuban.NowSelect == 0)
+                    {
+                        MainWindow.retsuban?.Load();
+                    }
                 }
                 try
                 {
@@ -147,15 +163,13 @@ namespace TatehamaATS
                             {
                                 TrainState.NextNextTrack = null;
                             }
+                            Debug.WriteLine("現在在線を先頭が越えたら");
+                            _ = MainWindow.signalSocket.enterSignal(TrainState.OnTrack);
                         }
                         //在線を先頭が踏んで戻ったら 
-                        if (TrainState.OnTrack.StartMeter > nowDis && TrainState.BeforeTrack == null)
+                        if (TrainState.OnTrack.StartMeter > nowDis)
                         {
                             TrainState.OnTrackIndex--;
-                            if ((int)TrainState.OnTrackIndex - 1 < TrainState.RouteDatabaseCount)
-                            {
-                                TrainState.BeforeTrack = TrainState.RouteDatabase.CircuitList[(int)TrainState.OnTrackIndex - 1];
-                            }
                             if ((int)TrainState.OnTrackIndex < TrainState.RouteDatabaseCount)
                             {
                                 TrainState.OnTrack = TrainState.RouteDatabase.CircuitList[(int)TrainState.OnTrackIndex];
@@ -176,11 +190,15 @@ namespace TatehamaATS
                             {
                                 TrainState.NextNextTrack = null;
                             }
+                            Debug.WriteLine("在線を先頭が踏んで戻ったら");
+                            _ = MainWindow.signalSocket.leaveSignal(TrainState.NextTrack);
                         }
                         //在線を最後尾が踏んで戻ったら 
                         if (TrainState.OnTrack.StartMeter > nowDis - TrainState.TrainLength && TrainState.BeforeTrack == null)
                         {
                             TrainState.BeforeTrack = TrainState.RouteDatabase.CircuitList[(int)TrainState.OnTrackIndex - 1];
+                            Debug.WriteLine("在線を最後尾が踏んで戻ったら");
+                            _ = MainWindow.signalSocket.enterSignal(TrainState.BeforeTrack);
                         }
                     }
                     if (TrainState.BeforeTrack != null)
@@ -188,6 +206,8 @@ namespace TatehamaATS
                         //前在線を最後尾が抜けたら  
                         if (TrainState.BeforeTrack.EndMeter < nowDis - TrainState.TrainLength)
                         {
+                            Debug.WriteLine("前在線を最後尾が抜けたら");
+                            _ = MainWindow.signalSocket.leaveSignal(TrainState.BeforeTrack);
                             TrainState.BeforeTrack = null;
                         }
                     }

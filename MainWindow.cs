@@ -9,8 +9,8 @@ namespace TatehamaATS
         private ControlLED controlLED;
         private SignalWindow signalWindow;
         private Relay relay;
-        private SignalSocket signalSocket;
-        private Retsuban retsuban;
+        static internal SignalSocket signalSocket = new SignalSocket();
+        static internal Retsuban retsuban;
         static internal Transfer transfer = new Transfer();
 
         public MainWindow()
@@ -22,7 +22,6 @@ namespace TatehamaATS
                 controlLED = new ControlLED();
                 relay = new Relay();
                 signalWindow = new SignalWindow();
-                signalSocket = new SignalSocket();
                 retsuban = new Retsuban(RetsubanText, CarText);
             }
             catch (ATSCommonException ex)

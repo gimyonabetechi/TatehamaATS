@@ -117,8 +117,9 @@ namespace TatehamaATS
         {
             var content = new StringContent(JsonSerializer.Serialize(plugin), Encoding.UTF8, "application/json");
             HttpResponseMessage response = await _client.PostAsync("/plugins", content);
-            response.EnsureSuccessStatusCode();
             string responseBody = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine(responseBody);
+            response.EnsureSuccessStatusCode();
             return responseBody;
         }
 
@@ -147,6 +148,7 @@ namespace TatehamaATS
             var content = new StringContent(JsonSerializer.Serialize(pluginData), Encoding.UTF8, "application/json");
             HttpResponseMessage response = await _client.PostAsync("/plugins/override_diagram", content);
             string responseBody = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine(responseBody);
             response.EnsureSuccessStatusCode();
             return responseBody;
         }

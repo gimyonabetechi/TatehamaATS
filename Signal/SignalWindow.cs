@@ -1,15 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Diagnostics;
 using TatehamaATS.Database;
-using TatehamaATS.DisplayLED;
 using TatehamaATS.Exceptions;
 
 namespace TatehamaATS.Signal
@@ -118,6 +108,23 @@ namespace TatehamaATS.Signal
                     }
                     break;
                 case SignalType.Main_3:
+                    switch (TrainState.NextTrack.Signal)
+                    {
+                        case SignalLight.R:
+                            SignaiPic.BackgroundImage = Properties.Resources._3_r;
+                            break;
+                        case SignalLight.Y:
+                            SignaiPic.BackgroundImage = Properties.Resources._3_y;
+                            break;
+                        case SignalLight.G:
+                            SignaiPic.BackgroundImage = Properties.Resources._3_g;
+                            break;
+                        default:
+                            SignaiPic.BackgroundImage = Properties.Resources._3_n;
+                            break;
+                    }
+                    break;
+                case SignalType.Main_3nb:
                     switch (TrainState.NextTrack.Signal)
                     {
                         case SignalLight.R:
