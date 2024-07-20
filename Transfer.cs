@@ -145,7 +145,7 @@ namespace TatehamaATS
         {
             await _tcs.Task;
             var content = new StringContent(JsonSerializer.Serialize(pluginData), Encoding.UTF8, "application/json");
-            HttpResponseMessage response = await _client.PostAsync("http://127.0.0.1:58680/tanuden-api/plugins/override_diagram", content);
+            HttpResponseMessage response = await _client.PostAsync("/plugins/override_diagram", content);
             string responseBody = await response.Content.ReadAsStringAsync();
             response.EnsureSuccessStatusCode();
             return responseBody;
