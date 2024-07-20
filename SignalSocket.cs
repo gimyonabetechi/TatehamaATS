@@ -1,10 +1,9 @@
-﻿using System.Diagnostics;
-using System.Text.Json.Serialization;
+﻿using SocketIO.Serializer.SystemTextJson;
+using System.Diagnostics;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using TatehamaATS.Database;
 using TatehamaATS.Exceptions;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
-using SocketIO.Serializer.SystemTextJson;
 
 namespace TatehamaATS
 {
