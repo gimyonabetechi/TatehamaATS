@@ -17,6 +17,7 @@ namespace TatehamaATS
     public class Transfer
     {
         private HttpClient _client;
+        private TaskCompletionSource _tcs = new();
 
         /// <summary>
         /// Transfer クラスのインスタンスを初期化する。
@@ -27,6 +28,11 @@ namespace TatehamaATS
             {
                 BaseAddress = new Uri("http://127.0.0.1:58680/tanuden-api")
             };
+            Task.Run(async () =>
+            {
+                await PostPIData();
+                _tcs.SetResult();
+            });
         }
 
         public async Task PostPIData()
@@ -137,10 +143,12 @@ namespace TatehamaATS
         /// <returns>レスポンスを含む文字列。</returns>
         public async Task<string> SendRetsubanDataAsync(object pluginData)
         {
+            await _tcs.Task;
             var content = new StringContent(JsonSerializer.Serialize(pluginData), Encoding.UTF8, "application/json");
-            HttpResponseMessage response = await _client.PostAsync("/plugins/override_diagram", content);
-            response.EnsureSuccessStatusCode();
+            HttpResponseMessage response = await _client.PostAsync("http://127.0.0.1:58680/tanuden-api/plugins/override_diagram", content);
             string responseBody = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine(responseBody);
+            response.EnsureSuccessStatusCode();
             return responseBody;
         }
     }
