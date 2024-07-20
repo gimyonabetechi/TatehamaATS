@@ -117,8 +117,12 @@ namespace TatehamaATS
         {
             var content = new StringContent(JsonSerializer.Serialize(plugin), Encoding.UTF8, "application/json");
             HttpResponseMessage response = await _client.PostAsync("/tanuden-api/plugins", content);
-            response.EnsureSuccessStatusCode();
             string responseBody = await response.Content.ReadAsStringAsync();
+            if(response.StatusCode == System.Net.HttpStatusCode.Conflict)
+            {
+                return responseBody;
+            }
+            response.EnsureSuccessStatusCode();
             return responseBody;
         }
 
