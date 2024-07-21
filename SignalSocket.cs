@@ -11,6 +11,13 @@ namespace TatehamaATS
     {
         private SocketIOClient.SocketIO client;
         private bool isSocketConnect;
+        private DateTime lastNormalResponse;
+        private TimeSpan dataOKTime = TimeSpan.FromSeconds(3);
+        private int elapseTimeoutCount = 0;
+        private int enterSignalTimeoutCount = 0;
+        private int leaveSignalTimeoutCount = 0;
+        private const int TimeoutLimit = 5;
+
         internal SignalSocket()
         {
             isSocketConnect = false;
@@ -24,30 +31,36 @@ namespace TatehamaATS
             Task.Run(() => UpdateLoop());
         }
 
-
         internal async Task enterSignal(TrackCircuitInfo? track)
         {
             if (TrainState.TrainDiaName == null || TrainState.TrainDiaName == "" || track == null)
             {
-                Debug.WriteLine("return");
+                //Debug.WriteLine("return");
                 return;
             }
-            Debug.WriteLine($"進入：{track}");
+            //Debug.WriteLine($"進入：{track}");
             try
             {
-                //こっからフレーム処理
                 var data = new CommonData
                 {
                     diaName = TrainState.TrainDiaName,
                     signalName = track.Name
                 };
                 await client.EmitAsync("enterSignal", data);
-                // 念の為明示的にイベントを解除
                 client.Off("elapsed");
+                enterSignalTimeoutCount = 0;
             }
             catch (TimeoutException ex)
             {
-                throw new SocketTimeOutException(3, "SignalSocket.cs@enterSignal()", ex);
+                enterSignalTimeoutCount++;
+                if (enterSignalTimeoutCount >= TimeoutLimit)
+                {
+                    throw new SocketTimeOutException(3, "SignalSocket.cs@enterSignal()", ex);
+                }
+                else
+                {
+                    await enterSignal(track);
+                }
             }
             catch (Exception ex)
             {
@@ -59,36 +72,52 @@ namespace TatehamaATS
         {
             if (TrainState.TrainDiaName == null || TrainState.TrainDiaName == "" || track == null)
             {
-                Debug.WriteLine("return");
+                //Debug.WriteLine("return");
                 return;
             }
-            Debug.WriteLine($"進出：{track}");
+            //Debug.WriteLine($"進出：{track}");
             try
             {
-                //こっからフレーム処理
                 var data = new CommonData
                 {
                     diaName = TrainState.TrainDiaName,
                     signalName = track.Name
                 };
                 await client.EmitAsync("leaveSignal", data);
-                // 念の為明示的にイベントを解除
                 client.Off("elapsed");
+                leaveSignalTimeoutCount = 0;
             }
             catch (TimeoutException ex)
             {
-                throw new SocketTimeOutException(3, "SignalSocket.cs@enterSignal()", ex);
+                leaveSignalTimeoutCount++;
+                if (leaveSignalTimeoutCount >= TimeoutLimit)
+                {
+                    throw new SocketTimeOutException(3, "SignalSocket.cs@leaveSignal()", ex);
+                }
+                else
+                {
+                    await leaveSignal(track);
+                }
             }
             catch (Exception ex)
             {
-                throw new SocketException(3, "SignalSocket.cs@enterSignal()", ex);
+                throw new SocketException(3, "SignalSocket.cs@leaveSignal()", ex);
             }
         }
 
         private async Task ConnectAndProcessAsync()
         {
-            await client.ConnectAsync();
-            isSocketConnect = true;
+            try
+            {
+                await client.ConnectAsync();
+                isSocketConnect = true;
+            }
+            catch (Exception ex)
+            {
+                isSocketConnect = false;
+                Debug.WriteLine($"再接続失敗: {ex.Message}");
+                throw new SocketException(3, "SignalSocket.cs@ConnectAndProcessAsync()", ex);
+            }
         }
 
         private async Task GetRoute()
@@ -115,16 +144,13 @@ namespace TatehamaATS
             {
                 // そんなに時間かからないと思うけど一応5秒待つ
                 var route = await ecs.Task.WaitAsync(TimeSpan.FromSeconds(5));
-                // 念の為明示的にイベントを解除
                 client.Off("route");
-                // ここでサーバーから来た結果に応じた処理を書く
                 TrainState.RouteDatabase = new RouteDatabase();
                 TrainState.RouteDatabase.AddTrack(new TrackCircuitInfo("初期在線", -200d, route[0].startMeter, SignalLight.N, SignalType.Yudo_2));
                 foreach (var track in route)
                 {
                     TrainState.RouteDatabase.AddTrack(track.toTrackCircuitInfo());
                 }
-                //TrainState.RouteDatabase.AddTrack(new TrackCircuitInfo("最終在線", route[route.Count - 1].endMeter,100000d, SignalLight.N, SignalType.Yudo_2));
                 TrainState.chengeDiaName = false;
                 TrainState.RouteDatabaseCount = TrainState.RouteDatabase.CircuitList.Count;
                 TrainState.OnTrackIndex = null;
@@ -152,79 +178,52 @@ namespace TatehamaATS
                 {
                     continue;
                 }
-                var timer = Task.Delay(1000);
+                var timer = Task.Delay(500);
                 try
                 {
                     await Elapse();
-                }
-                catch (ATSCommonException ex)
-                {
-                    // ここで例外をキャッチしてログなどに出力する     
-                    TrainState.ATSBroken = true;
-                    Debug.WriteLine($"故障");
-                    Debug.WriteLine($"{ex.Message} {ex.InnerException}");
-                    TrainState.ATSDisplay?.SetLED("", "");
-                    TrainState.ATSDisplay?.AddState(ex.ToCode());
-                    Debug.WriteLine($"{ex.Message}");
-                }
-                catch (Exception ex)
-                {
-                    // 他の例外もキャッチしてログなどに出力する    
-                    TrainState.ATSBroken = true;
-                    Debug.WriteLine($"故障");
-                    Debug.WriteLine($"{ex.Message} {ex.InnerException}");
-                    var e = new SocketException(3, "", ex);
-                    TrainState.ATSDisplay?.SetLED("", "");
-                    TrainState.ATSDisplay?.AddState(e.ToCode());
-                }
-                if (TrainState.chengeDiaName)
-                {
-                    try
+                    if (TrainState.chengeDiaName)
                     {
                         await GetRoute();
                     }
-                    catch (ATSCommonException ex)
-                    {
-                        TrainState.chengeDiaName = true;
-                        // ここで例外をキャッチしてログなどに出力する     
-                        TrainState.ATSBroken = true;
-                        Debug.WriteLine($"故障");
-                        Debug.WriteLine($"{ex.Message} {ex.InnerException}");
-                        TrainState.ATSDisplay?.SetLED("", "");
-                        TrainState.ATSDisplay?.AddState(ex.ToCode());
-                        Debug.WriteLine($"{ex.Message}");
-                    }
-                    catch (Exception ex)
-                    {
-                        TrainState.chengeDiaName = true;
-                        // 他の例外もキャッチしてログなどに出力する    
-                        TrainState.ATSBroken = true;
-                        Debug.WriteLine($"故障");
-                        Debug.WriteLine($"{ex.Message} {ex.InnerException}");
-                        var e = new SocketException(3, "", ex);
-                        TrainState.ATSDisplay?.SetLED("", "");
-                        TrainState.ATSDisplay?.AddState(e.ToCode());
-                    }
+                }
+                catch (ATSCommonException ex)
+                {
+                    TrainState.ATSBroken = true;
+                    Debug.WriteLine($"故障");
+                    Debug.WriteLine($"{ex}");
+                    Debug.WriteLine($"{ex.InnerException}");
+                    TrainState.ATSDisplay?.SetLED("", "");
+                    TrainState.ATSDisplay?.AddState(ex.ToCode());
+                }
+                catch (Exception ex)
+                {
+                    TrainState.ATSBroken = true;
+                    Debug.WriteLine($"故障");
+                    Debug.WriteLine($"{ex}");
+                    Debug.WriteLine($"{ex.InnerException}");
+                    var e = new SocketCountaException(3, "", ex);
+                    TrainState.ATSDisplay?.SetLED("", "");
+                    TrainState.ATSDisplay?.AddState(e.ToCode());
                 }
                 await timer;
             }
         }
 
-
         private async Task Elapse()
         {
             if (TrainState.TrainDiaName == null || TrainState.TrainDiaName == "" || TrainState.NextTrack == null)
             {
-                Debug.WriteLine("return");
+                //Debug.WriteLine("return");
+                lastNormalResponse = DateTime.Now;
                 return;
             }
-            Debug.WriteLine(TrainState.BeforeTrack);
-            Debug.WriteLine(TrainState.OnTrack);
-            Debug.WriteLine(TrainState.OnTrackIndex);
-            Debug.WriteLine(TrainState.NextTrack);
+            //Debug.WriteLine(TrainState.BeforeTrack);
+            //Debug.WriteLine(TrainState.OnTrack);
+            //Debug.WriteLine(TrainState.OnTrackIndex);
+            //Debug.WriteLine(TrainState.NextTrack);
             try
             {
-                //こっからフレーム処理
                 var data = new CommonData
                 {
                     diaName = TrainState.TrainDiaName,
@@ -238,51 +237,7 @@ namespace TatehamaATS
                     tcs.SetResult(elapsedData);
                 });
                 var elapsed = await tcs.Task.WaitAsync(TimeSpan.FromSeconds(1));
-                // 念の為明示的にイベントを解除
                 client.Off("elapsed");
-                // ここでサーバーから来た結果に応じた処理を書く
-                Debug.WriteLine($"{elapsed.signalName}/{elapsed.signalPhase}/{elapsed.signalType}");
-                SignalLight signalLight;
-                switch (elapsed.signalPhase)
-                {
-                    case "R":
-                        signalLight = SignalLight.R; break;
-                    case "YY":
-                        signalLight = SignalLight.YY; break;
-                    case "Y":
-                        signalLight = SignalLight.Y; break;
-                    case "YG":
-                        signalLight = SignalLight.YG; break;
-                    case "G":
-                        signalLight = SignalLight.G; break;
-                    case "SwitchG":
-                        signalLight = SignalLight.SwitchG; break;
-                    default:
-                        signalLight = SignalLight.N; break;
-
-                }
-                TrainState.RouteDatabase?.SetSignalLight(elapsed.signalName, signalLight);
-            }
-            catch (TimeoutException ex)
-            {
-                throw new SocketTimeOutException(3, "SignalSocket.cs@Elapse()", ex);
-            }
-            catch (Exception ex)
-            {
-                throw new SocketException(3, "SignalSocket.cs@Elapse()", ex);
-            }
-            if (TrainState.TrainDiaName == null || TrainState.TrainDiaName == "" || TrainState.NextTrack == null)
-            {
-                Debug.WriteLine("return");
-                return;
-            }
-            try
-            {
-                if (TrainState.NextNextTrack == null)
-                {
-                    return;
-                }
-                //こっからフレーム処理
                 var data2 = new CommonData
                 {
                     diaName = TrainState.TrainDiaName,
@@ -295,41 +250,37 @@ namespace TatehamaATS
                     var elapsedData = response.GetValue<ElapsedData>();
                     tcs2.SetResult(elapsedData);
                 });
-                var elapsed = await tcs2.Task.WaitAsync(TimeSpan.FromSeconds(1));
-                // 念の為明示的にイベントを解除
+                var elapsed2 = await tcs2.Task.WaitAsync(TimeSpan.FromSeconds(1));
                 client.Off("elapsed");
-                // ここでサーバーから来た結果に応じた処理を書く
-                Debug.WriteLine($"{elapsed.signalName}/{elapsed.signalPhase}/{elapsed.signalType}");
-                SignalLight signalLight;
-                switch (elapsed.signalPhase)
-                {
-                    case "R":
-                        signalLight = SignalLight.R; break;
-                    case "YY":
-                        signalLight = SignalLight.YY; break;
-                    case "Y":
-                        signalLight = SignalLight.Y; break;
-                    case "YG":
-                        signalLight = SignalLight.YG; break;
-                    case "G":
-                        signalLight = SignalLight.G; break;
-                    default:
-                        signalLight = SignalLight.N; break;
+                elapseTimeoutCount = 0;
+                lastNormalResponse = DateTime.Now;
 
-                }
-                TrainState.RouteDatabase?.SetSignalLight(elapsed.signalName, signalLight);
+                //Debug.WriteLine($"{elapsed.signalName}/{elapsed.signalPhase}/{elapsed.signalType}");
+                TrainState.RouteDatabase?.SetSignalLight(elapsed.signalName, elapsed.signalPhase);
             }
             catch (TimeoutException ex)
             {
-                throw new SocketTimeOutException(3, "SignalSocket.cs@Elapse()", ex);
+                elapseTimeoutCount++;
+                if (elapseTimeoutCount >= TimeoutLimit)
+                {
+                    throw new SocketTimeOutException(3, "SignalSocket.cs@Elapse()", ex);
+                }
             }
             catch (Exception ex)
             {
                 throw new SocketException(3, "SignalSocket.cs@Elapse()", ex);
             }
+            finally
+            {
+                if ((DateTime.Now - lastNormalResponse) > dataOKTime)
+                {
+                    throw new SocketDataExpired(3, "SignalSocket.cs@Elapse()");
+                }
+            }
         }
 
         private Dictionary<string, string> RetsubanTable = new Dictionary<string, string> {
+            {"回451", "551"},
             {"回1013A", "回1105A"},
             {"1112A", "1204A"},
             {"1017A", "1107A"},
@@ -379,8 +330,8 @@ namespace TatehamaATS
     class ElapsedData
     {
         public string signalName { get; set; }
-        public string signalPhase { get; set; }
-        public string signalType { get; set; }
+        public SignalLight signalPhase { get; set; }
+        public SignalType signalType { get; set; }
     }
 
     class RawTrackCircuitInfo
