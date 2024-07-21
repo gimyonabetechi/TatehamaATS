@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using TatehamaATS.Exceptions;
 using TrainCrew;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
 namespace TatehamaATS
 {
@@ -71,6 +72,8 @@ namespace TatehamaATS
                 {
                     new RelayException(3, "Relay.cs@Elapse()", ex);
                 }
+
+                //ゲーム状態の取得
                 if (!(TrainState.gameScreen == GameScreen.MainGame || TrainState.gameScreen == GameScreen.MainGame_Pause))
                 {
                     if (TrainState.RouteDatabase != null)
@@ -93,6 +96,8 @@ namespace TatehamaATS
                         MainWindow.retsuban?.Load();
                     }
                 }
+
+                //自車速度の取得
                 try
                 {
                     TrainState.TrainSpeed = TC_TrainState.Speed;
@@ -101,6 +106,8 @@ namespace TatehamaATS
                 {
                     new TGAbnormalException(3, "Relay.cs@Elapse()", ex);
                 }
+
+                //ノッチ・現在時刻取得
                 try
                 {
                     TrainState.TrainPnotch = TC_TrainState.Pnotch;
@@ -111,6 +118,8 @@ namespace TatehamaATS
                 {
                     new RelayException(3, "Relay.cs@Elapse()", ex);
                 }
+
+                //現在のATS表示器取得
                 try
                 {
                     //TrainState.TC_ATSDisplay = new ATSDisplay(TC_TrainState.ATS_Class, TC_TrainState.ATS_Speed, [TC_TrainState.ATS_State]);
@@ -121,18 +130,28 @@ namespace TatehamaATS
                 {
                     new TCSideATSDataAbnormalException(3, "Relay.cs@Elapse()", ex);
                 }
+
+                //軌道回路情報あり
                 if (TrainState.RouteDatabase != null)
                 {
+                    var nowDis = TC_TrainState.TotalLength;
+                    //現在軌道回路インデックス不明 ≒ リセット時
                     if (TrainState.OnTrackIndex == null)
                     {
                         TrainState.OnTrackIndex = 0;
-                        TrainState.BeforeTrack = null;
-                        TrainState.OnTrack = TrainState.RouteDatabase.CircuitList[0];
-                        TrainState.NextTrack = TrainState.RouteDatabase.CircuitList[1];
-                        TrainState.NextNextTrack = TrainState.RouteDatabase.CircuitList[2];
+                        foreach (var track in TrainState.RouteDatabase.CircuitList)
+                        {
+                            _ = MainWindow.signalSocket.leaveSignal(track);
+                            if (track.StartMeter < nowDis && nowDis < track.EndMeter)
+                            {
+                                break;
+                            }
+                            TrainState.OnTrackIndex++;
+                        }
+                        TrackInfoGet();
                     }
-                    var nowDis = TC_TrainState.TotalLength;
 
+                    //現在軌道回路あり
                     if (TrainState.OnTrack != null)
                     {
                         //現在在線を先頭が越えたら
@@ -143,61 +162,23 @@ namespace TatehamaATS
                             {
                                 TrainState.BeforeTrack = TrainState.RouteDatabase.CircuitList[(int)TrainState.OnTrackIndex - 1];
                             }
-                            if ((int)TrainState.OnTrackIndex < TrainState.RouteDatabaseCount)
-                            {
-                                TrainState.OnTrack = TrainState.RouteDatabase.CircuitList[(int)TrainState.OnTrackIndex];
-                            }
-                            if ((int)TrainState.OnTrackIndex + 1 < TrainState.RouteDatabaseCount)
-                            {
-                                TrainState.NextTrack = TrainState.RouteDatabase.CircuitList[(int)TrainState.OnTrackIndex + 1];
-                            }
-                            else
-                            {
-                                TrainState.NextTrack = null;
-                            }
-                            if ((int)TrainState.OnTrackIndex + 2 < TrainState.RouteDatabaseCount)
-                            {
-                                TrainState.NextNextTrack = TrainState.RouteDatabase.CircuitList[(int)TrainState.OnTrackIndex + 2];
-                            }
-                            else
-                            {
-                                TrainState.NextNextTrack = null;
-                            }
-                            Debug.WriteLine("現在在線を先頭が越えたら");
+                            TrackInfoGet();
+                            //Debug.WriteLine("現在在線を先頭が越えたら");
                             _ = MainWindow.signalSocket.enterSignal(TrainState.OnTrack);
                         }
                         //在線を先頭が踏んで戻ったら 
                         if (TrainState.OnTrack.StartMeter > nowDis)
                         {
                             TrainState.OnTrackIndex--;
-                            if ((int)TrainState.OnTrackIndex < TrainState.RouteDatabaseCount)
-                            {
-                                TrainState.OnTrack = TrainState.RouteDatabase.CircuitList[(int)TrainState.OnTrackIndex];
-                            }
-                            if ((int)TrainState.OnTrackIndex + 1 < TrainState.RouteDatabaseCount)
-                            {
-                                TrainState.NextTrack = TrainState.RouteDatabase.CircuitList[(int)TrainState.OnTrackIndex + 1];
-                            }
-                            else
-                            {
-                                TrainState.NextTrack = null;
-                            }
-                            if ((int)TrainState.OnTrackIndex + 2 < TrainState.RouteDatabaseCount)
-                            {
-                                TrainState.NextNextTrack = TrainState.RouteDatabase.CircuitList[(int)TrainState.OnTrackIndex + 2];
-                            }
-                            else
-                            {
-                                TrainState.NextNextTrack = null;
-                            }
-                            Debug.WriteLine("在線を先頭が踏んで戻ったら");
+                            TrackInfoGet();
+                            //Debug.WriteLine("在線を先頭が踏んで戻ったら");
                             _ = MainWindow.signalSocket.leaveSignal(TrainState.NextTrack);
                         }
                         //在線を最後尾が踏んで戻ったら 
                         if (TrainState.OnTrack.StartMeter > nowDis - TrainState.TrainLength && TrainState.BeforeTrack == null)
                         {
                             TrainState.BeforeTrack = TrainState.RouteDatabase.CircuitList[(int)TrainState.OnTrackIndex - 1];
-                            Debug.WriteLine("在線を最後尾が踏んで戻ったら");
+                            //Debug.WriteLine("在線を最後尾が踏んで戻ったら");
                             _ = MainWindow.signalSocket.enterSignal(TrainState.BeforeTrack);
                         }
                     }
@@ -206,11 +187,12 @@ namespace TatehamaATS
                         //前在線を最後尾が抜けたら  
                         if (TrainState.BeforeTrack.EndMeter < nowDis - TrainState.TrainLength)
                         {
-                            Debug.WriteLine("前在線を最後尾が抜けたら");
+                            //Debug.WriteLine("前在線を最後尾が抜けたら");
                             _ = MainWindow.signalSocket.leaveSignal(TrainState.BeforeTrack);
                             TrainState.BeforeTrack = null;
                         }
                     }
+
                 }
                 else
                 {
@@ -220,6 +202,35 @@ namespace TatehamaATS
             catch (Exception ex)
             {
                 throw new RelayException(3, "Relay.cs@Elapse()", ex);
+            }
+        }
+
+
+        private void TrackInfoGet()
+        {
+            if (TrainState.RouteDatabase != null && TrainState.OnTrackIndex != null)
+            {
+                if ((int)TrainState.OnTrackIndex < TrainState.RouteDatabaseCount)
+                {
+                    TrainState.OnTrack = TrainState.RouteDatabase.CircuitList[(int)TrainState.OnTrackIndex];
+                    _ = MainWindow.signalSocket.enterSignal(TrainState.OnTrack);
+                }
+                if ((int)TrainState.OnTrackIndex + 1 < TrainState.RouteDatabaseCount)
+                {
+                    TrainState.NextTrack = TrainState.RouteDatabase.CircuitList[(int)TrainState.OnTrackIndex + 1];
+                }
+                else
+                {
+                    TrainState.NextTrack = null;
+                }
+                if ((int)TrainState.OnTrackIndex + 2 < TrainState.RouteDatabaseCount)
+                {
+                    TrainState.NextNextTrack = TrainState.RouteDatabase.CircuitList[(int)TrainState.OnTrackIndex + 2];
+                }
+                else
+                {
+                    TrainState.NextNextTrack = null;
+                }
             }
         }
     }
