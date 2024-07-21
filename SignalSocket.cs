@@ -16,6 +16,7 @@ namespace TatehamaATS
         private int elapseTimeoutCount = 0;
         private int enterSignalTimeoutCount = 0;
         private int leaveSignalTimeoutCount = 0;
+        private int enteringCompleteTimeoutCount = 0;
         private const int TimeoutLimit = 5;
 
         internal SignalSocket()
@@ -97,6 +98,42 @@ namespace TatehamaATS
                 else
                 {
                     await leaveSignal(track);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new SocketException(3, "SignalSocket.cs@leaveSignal()", ex);
+            }
+        }
+        internal async Task enteringComplete(TrackCircuitInfo track)
+        {
+            if (TrainState.TrainDiaName == null || TrainState.TrainDiaName == "" || track == null)
+            {
+                //Debug.WriteLine("return");
+                return;
+            }
+            //Debug.WriteLine($"進出：{track}");
+            try
+            {
+                var data = new CommonData
+                {
+                    diaName = TrainState.TrainDiaName,
+                    signalName = track.Name
+                };
+                await client.EmitAsync("enteringComplete", data);
+                client.Off("elapsed");
+                leaveSignalTimeoutCount = 0;
+            }
+            catch (TimeoutException ex)
+            {
+                enteringCompleteTimeoutCount++;
+                if (enteringCompleteTimeoutCount >= TimeoutLimit)
+                {
+                    throw new SocketTimeOutException(3, "SignalSocket.cs@leaveSignal()", ex);
+                }
+                else
+                {
+                    await enteringComplete(track);
                 }
             }
             catch (Exception ex)

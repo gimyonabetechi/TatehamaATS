@@ -181,6 +181,19 @@ namespace TatehamaATS
                             //Debug.WriteLine("在線を最後尾が踏んで戻ったら");
                             _ = MainWindow.signalSocket.enterSignal(TrainState.BeforeTrack);
                         }
+
+
+                        //進入完了処理
+                        if (TrainState.OnTrack.EndMeter - nowDis < 20)
+                        {
+                            //20m切ったら流石に入りきってる         
+                            _ = MainWindow.signalSocket.enteringComplete(TrainState.OnTrack);
+                        }
+                        else if (TrainState.OnTrack.EndMeter - nowDis < 60 && TrainState.TrainSpeed == 0)
+                        {
+                            //60m以内で停止したら駅だと思う
+                            _ = MainWindow.signalSocket.enteringComplete(TrainState.OnTrack);
+                        }
                     }
                     if (TrainState.BeforeTrack != null)
                     {
@@ -192,7 +205,6 @@ namespace TatehamaATS
                             TrainState.BeforeTrack = null;
                         }
                     }
-
                 }
                 else
                 {
