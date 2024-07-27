@@ -64,6 +64,8 @@ namespace TatehamaATS.Database
         public SignalLight Signal { get; set; }
         public SignalType SignalType { get; private set; }
 
+        public bool enterComp { get; set; }
+
         public TrackCircuitInfo(string name, double startMeter, double endMeter, SignalLight signal, SignalType signalType)
         {
             try
@@ -73,6 +75,7 @@ namespace TatehamaATS.Database
                 EndMeter = endMeter;
                 Signal = signal;
                 SignalType = signalType;
+                enterComp = false;
             }
             catch (Exception ex)
             {

@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using TatehamaATS.Exceptions;
 using TrainCrew;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
 namespace TatehamaATS
 {
@@ -135,6 +134,7 @@ namespace TatehamaATS
                 if (TrainState.RouteDatabase != null)
                 {
                     var nowDis = TC_TrainState.TotalLength;
+                    //Debug.WriteLine($"{nowDis}");
                     //現在軌道回路インデックス不明 ≒ リセット時
                     if (TrainState.OnTrackIndex == null)
                     {
@@ -183,16 +183,21 @@ namespace TatehamaATS
                         }
 
 
-                        //進入完了処理
-                        if (TrainState.OnTrack.EndMeter - nowDis < 20)
+                        if (!TrainState.OnTrack.enterComp)
                         {
-                            //20m切ったら流石に入りきってる         
-                            _ = MainWindow.signalSocket.enteringComplete(TrainState.OnTrack);
-                        }
-                        else if (TrainState.OnTrack.EndMeter - nowDis < 60 && TrainState.TrainSpeed == 0)
-                        {
-                            //60m以内で停止したら駅だと思う
-                            _ = MainWindow.signalSocket.enteringComplete(TrainState.OnTrack);
+                            //進入完了処理
+                            if (TrainState.OnTrack.EndMeter - (nowDis - TrainState.TrainLength) < 130)
+                            {
+                                //ケツが130mならいくら何でも入りきってるで
+                                _ = MainWindow.signalSocket.enteringComplete(TrainState.OnTrack);
+                                TrainState.OnTrack.enterComp = true;
+                            }
+                            else if (TrainState.OnTrack.EndMeter - (nowDis - TrainState.TrainLength) < 170 && TrainState.TrainSpeed == 0)
+                            {
+                                //ケツが170m以内で停止したら入線しきってると思う
+                                _ = MainWindow.signalSocket.enteringComplete(TrainState.OnTrack);
+                                TrainState.OnTrack.enterComp = true;
+                            }
                         }
                     }
                     if (TrainState.BeforeTrack != null)

@@ -4,7 +4,6 @@ using TatehamaATS.Exceptions;
 
 namespace TatehamaATS.Signal
 {
-
     public partial class SignalWindow : Form
     {
         public bool isShow;

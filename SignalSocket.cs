@@ -12,7 +12,7 @@ namespace TatehamaATS
         private SocketIOClient.SocketIO client;
         private bool isSocketConnect;
         private DateTime lastNormalResponse;
-        private TimeSpan dataOKTime = TimeSpan.FromSeconds(3);
+        private TimeSpan dataOKTime = TimeSpan.FromSeconds(5);
         private int elapseTimeoutCount = 0;
         private int enterSignalTimeoutCount = 0;
         private int leaveSignalTimeoutCount = 0;
@@ -48,7 +48,6 @@ namespace TatehamaATS
                     signalName = track.Name
                 };
                 await client.EmitAsync("enterSignal", data);
-                client.Off("elapsed");
                 enterSignalTimeoutCount = 0;
             }
             catch (TimeoutException ex)
@@ -85,7 +84,6 @@ namespace TatehamaATS
                     signalName = track.Name
                 };
                 await client.EmitAsync("leaveSignal", data);
-                client.Off("elapsed");
                 leaveSignalTimeoutCount = 0;
             }
             catch (TimeoutException ex)
@@ -121,7 +119,6 @@ namespace TatehamaATS
                     signalName = track.Name
                 };
                 await client.EmitAsync("enteringComplete", data);
-                client.Off("elapsed");
                 leaveSignalTimeoutCount = 0;
             }
             catch (TimeoutException ex)
@@ -273,27 +270,29 @@ namespace TatehamaATS
                     var elapsedData = response.GetValue<ElapsedData>();
                     tcs.SetResult(elapsedData);
                 });
-                var elapsed = await tcs.Task.WaitAsync(TimeSpan.FromSeconds(1));
+                var elapsed = await tcs.Task.WaitAsync(TimeSpan.FromMilliseconds(500));
                 client.Off("elapsed");
-                var data2 = new CommonData
+                TrainState.RouteDatabase?.SetSignalLight(elapsed.signalName, elapsed.signalPhase);
+                if (TrainState.NextNextTrack != null)
                 {
-                    diaName = TrainState.TrainDiaName,
-                    signalName = TrainState.NextNextTrack.Name
-                };
-                await client.EmitAsync("elapse", data2);
-                var tcs2 = new TaskCompletionSource<ElapsedData>();
-                client.On("elapsed", response =>
-                {
-                    var elapsedData = response.GetValue<ElapsedData>();
-                    tcs2.SetResult(elapsedData);
-                });
-                var elapsed2 = await tcs2.Task.WaitAsync(TimeSpan.FromSeconds(1));
-                client.Off("elapsed");
+                    var data2 = new CommonData
+                    {
+                        diaName = TrainState.TrainDiaName,
+                        signalName = TrainState.NextNextTrack.Name
+                    };
+                    await client.EmitAsync("elapse", data2);
+                    var tcs2 = new TaskCompletionSource<ElapsedData>();
+                    client.On("elapsed", response =>
+                    {
+                        var elapsedData = response.GetValue<ElapsedData>();
+                        tcs2.SetResult(elapsedData);
+                    });
+                    var elapsed2 = await tcs2.Task.WaitAsync(TimeSpan.FromMilliseconds(500));
+                    client.Off("elapsed");
+                    TrainState.RouteDatabase?.SetSignalLight(elapsed2.signalName, elapsed2.signalPhase);
+                }
                 elapseTimeoutCount = 0;
                 lastNormalResponse = DateTime.Now;
-
-                //Debug.WriteLine($"{elapsed.signalName}/{elapsed.signalPhase}/{elapsed.signalType}");
-                TrainState.RouteDatabase?.SetSignalLight(elapsed.signalName, elapsed.signalPhase);
             }
             catch (TimeoutException ex)
             {
@@ -317,7 +316,6 @@ namespace TatehamaATS
         }
 
         private Dictionary<string, string> RetsubanTable = new Dictionary<string, string> {
-            {"回451", "551"},
             {"回1013A", "回1105A"},
             {"1112A", "1204A"},
             {"1017A", "1107A"},
@@ -348,9 +346,9 @@ namespace TatehamaATS
             {"1184C", "1284C"},
             {"回7290", "回862"},
             {"回7291", "回607A"},
-            {"回1295", "回607A"},
-            {"1295B", "回607A"},
-            {"回1294", "回862"},
+            {"回1295", "555B"},
+            {"1295B", "555B"},
+            {"回1294", "796K"},
             {"1294K", "796K"},
             {"回1281", "回607A"},
             {"1281B", "回607A"},
@@ -368,7 +366,7 @@ namespace TatehamaATS
     {
         public string signalName { get; set; }
         public SignalLight signalPhase { get; set; }
-        public SignalType signalType { get; set; }
+        public string signalType { get; set; }
     }
 
     class RawTrackCircuitInfo

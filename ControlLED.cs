@@ -227,8 +227,8 @@ namespace TatehamaATS
             switch (str)
             {
                 case "":
-                    return 0;
                 case "無表示":
+                case null:
                     return 0;
                 case "普通":
                     return 1;

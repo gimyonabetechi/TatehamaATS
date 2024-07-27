@@ -43,6 +43,7 @@ namespace TatehamaATS.Database
                 throw new DBTrackDataChengeAbnormal(3, "RouteDatabase.cs@SetSignalLight()");
             }
         }
+
         public override string ToString()
         {
             string Text = "軌道回路情報：\n";
