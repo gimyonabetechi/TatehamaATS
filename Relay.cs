@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using TatehamaATS.Exceptions;
 using TrainCrew;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
 namespace TatehamaATS
 {
@@ -75,11 +76,12 @@ namespace TatehamaATS
                 //ゲーム状態の取得
                 if (!(TrainState.gameScreen == GameScreen.MainGame || TrainState.gameScreen == GameScreen.MainGame_Pause))
                 {
+                    //ゲーム中orゲームポーズ中ではない
                     if (TrainState.RouteDatabase != null)
                     {
-                        foreach (var track in TrainState.RouteDatabase.CircuitList)
+                        for (int i = 0; i < TrainState.RouteDatabase.CircuitList.Count - 1; i++)
                         {
-                            _ = MainWindow.signalSocket.leaveSignal(track);
+                            _ = MainWindow.signalSocket.leaveSignal(TrainState.RouteDatabase.CircuitList[i]);
                         }
                         if (MainWindow.retsuban != null && MainWindow.retsuban.NowSelect != 0)
                         {
@@ -90,6 +92,7 @@ namespace TatehamaATS
                 }
                 else
                 {
+                    //ゲーム中orゲームポーズ中
                     if (MainWindow.retsuban != null && MainWindow.retsuban.NowSelect == 0)
                     {
                         MainWindow.retsuban?.Load();
