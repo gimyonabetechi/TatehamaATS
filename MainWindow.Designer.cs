@@ -37,6 +37,7 @@
             LEDStatus = new ToolStripStatusLabel();
             toolStripStatusLabel4 = new ToolStripStatusLabel();
             SigWinStatus = new ToolStripStatusLabel();
+            toolStripStatusLabel5 = new ToolStripStatusLabel();
             LEDWindowButton = new Button();
             ATSResetButton = new Button();
             SignalWindowButton = new Button();
@@ -76,7 +77,7 @@
             // statusStrip1
             // 
             statusStrip1.Font = new Font("ＭＳ ゴシック", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
-            statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1, TanudenStatus, toolStripStatusLabel2, SignalStatus, toolStripStatusLabel3, LEDStatus, toolStripStatusLabel4, SigWinStatus });
+            statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1, TanudenStatus, toolStripStatusLabel2, SignalStatus, toolStripStatusLabel3, LEDStatus, toolStripStatusLabel4, SigWinStatus, toolStripStatusLabel5 });
             statusStrip1.Location = new Point(0, 455);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Size = new Size(914, 25);
@@ -138,6 +139,13 @@
             SigWinStatus.Name = "SigWinStatus";
             SigWinStatus.Size = new Size(59, 20);
             SigWinStatus.Text = "非表示";
+            // 
+            // toolStripStatusLabel5
+            // 
+            toolStripStatusLabel5.BorderSides = ToolStripStatusLabelBorderSides.Left | ToolStripStatusLabelBorderSides.Right;
+            toolStripStatusLabel5.Name = "toolStripStatusLabel5";
+            toolStripStatusLabel5.Size = new Size(75, 20);
+            toolStripStatusLabel5.Text = "Ver0.3.1";
             // 
             // LEDWindowButton
             // 
@@ -547,5 +555,6 @@
         private Label label2;
         private Label label6;
         private Label label3;
+        private ToolStripStatusLabel toolStripStatusLabel5;
     }
 }
