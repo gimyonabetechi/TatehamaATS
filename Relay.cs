@@ -79,10 +79,6 @@ namespace TatehamaATS
                     //ゲーム中orゲームポーズ中ではない
                     if (TrainState.RouteDatabase != null)
                     {
-                        for (int i = 0; i < TrainState.RouteDatabase.CircuitList.Count - 1; i++)
-                        {
-                            _ = MainWindow.signalSocket.leaveSignal(TrainState.RouteDatabase.CircuitList[i]);
-                        }
                         if (MainWindow.retsuban != null && MainWindow.retsuban.NowSelect != 0)
                         {
                             MainWindow.retsuban.Init();

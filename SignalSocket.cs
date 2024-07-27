@@ -248,14 +248,14 @@ namespace TatehamaATS
         {
             if (TrainState.TrainDiaName == null || TrainState.TrainDiaName == "" || TrainState.NextTrack == null)
             {
-                //Debug.WriteLine("return");
+                Debug.WriteLine("return");
                 lastNormalResponse = DateTime.Now;
                 return;
             }
             //Debug.WriteLine(TrainState.BeforeTrack);
             //Debug.WriteLine(TrainState.OnTrack);
             //Debug.WriteLine(TrainState.OnTrackIndex);
-            //Debug.WriteLine(TrainState.NextTrack);
+            Debug.WriteLine(TrainState.NextTrack);
             try
             {
                 var data = new CommonData

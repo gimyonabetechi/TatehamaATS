@@ -64,7 +64,6 @@ namespace TatehamaATS
                     try
                     {
                         TrainState.TrainDiaName = RetsubanText.Text;
-                        TrainState.chengeDiaName = true;
                         MainWindow.transfer.SetRetsuban();
                         NowSelect++;
                         PlayLoopingSound(set_trainsetlen);
@@ -89,6 +88,7 @@ namespace TatehamaATS
                         {
                             throw new CarAbnormal(3, "2-10範囲外Retsuban.cs@Enter");
                         }
+                        TrainState.chengeDiaName = true;
                     }
                     catch (Exception ex)
                     {
@@ -189,6 +189,7 @@ namespace TatehamaATS
             CarText.Text = "";
             PlaySound(beep3);
         }
+
         public void Load()
         {
             NowSelect = 1;
