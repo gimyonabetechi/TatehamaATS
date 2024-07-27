@@ -81,6 +81,8 @@ namespace TatehamaATS.Signal
             if (TrainState.NextTrack == null)
             {
                 SignaiPic.BackgroundImage = Properties.Resources.signull;
+                NowSignalType = SignalType.Yudo_2;
+                NowSignalLight = SignalLight.N;
                 return;
             }
             //信号種類・信号現示に何らかの変化がない場合早期return
@@ -88,6 +90,8 @@ namespace TatehamaATS.Signal
             {
                 return;
             }
+            NowSignalType = TrainState.NextTrack.SignalType;
+            NowSignalLight = TrainState.NextTrack.Signal;
 
             //主信号
             switch (TrainState.NextTrack.SignalType)
