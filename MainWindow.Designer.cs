@@ -96,7 +96,7 @@
             TanudenStatus.BorderSides = ToolStripStatusLabelBorderSides.Left | ToolStripStatusLabelBorderSides.Right;
             TanudenStatus.Name = "TanudenStatus";
             TanudenStatus.Size = new Size(59, 20);
-            TanudenStatus.Text = "未実装";
+            TanudenStatus.Text = "仮実装";
             // 
             // toolStripStatusLabel2
             // 
@@ -110,7 +110,7 @@
             SignalStatus.BorderSides = ToolStripStatusLabelBorderSides.Left | ToolStripStatusLabelBorderSides.Right;
             SignalStatus.Name = "SignalStatus";
             SignalStatus.Size = new Size(59, 20);
-            SignalStatus.Text = "受　信";
+            SignalStatus.Text = "実装済";
             // 
             // toolStripStatusLabel3
             // 
@@ -144,8 +144,8 @@
             // 
             toolStripStatusLabel5.BorderSides = ToolStripStatusLabelBorderSides.Left | ToolStripStatusLabelBorderSides.Right;
             toolStripStatusLabel5.Name = "toolStripStatusLabel5";
-            toolStripStatusLabel5.Size = new Size(75, 20);
-            toolStripStatusLabel5.Text = "Ver0.3.1";
+            toolStripStatusLabel5.Size = new Size(107, 20);
+            toolStripStatusLabel5.Text = "Ver0.3.2-rc4";
             // 
             // LEDWindowButton
             // 
@@ -222,7 +222,7 @@
             RetsubanRin.Name = "RetsubanRin";
             RetsubanRin.Size = new Size(40, 40);
             RetsubanRin.TabIndex = 24;
-            RetsubanRin.Text = "臨";
+            RetsubanRin.Text = "Ｘ";
             RetsubanRin.UseVisualStyleBackColor = true;
             RetsubanRin.Click += RetsubanRin_Click;
             // 

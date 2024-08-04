@@ -29,5 +29,13 @@
         {
             return Place.ToString() + "DF";
         }
+        public override ResetConditions ResetCondition()
+        {
+            return ResetConditions.PowerReset;
+        }
+        public override OutputBrake ToBrake()
+        {
+            return OutputBrake.None;
+        }
     }
 }

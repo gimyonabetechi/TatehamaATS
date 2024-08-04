@@ -9,13 +9,16 @@ namespace TatehamaATS
     {
         public bool isShow;
         public bool isTest;
+        public List<string> ExceptionCodes;
         private LEDWindow ledWindow;
         private int l3Index = 0; // display.L3のインデックスを追跡するための変数         
         private TimeSpan L3Start = new TimeSpan();
         private DateTime TestStart = new DateTime();
+        public string? overrideText = null;
 
         public ControlLED()
         {
+            ExceptionCodes = new List<string>();
             try
             {
                 ledWindow = new LEDWindow();
@@ -30,6 +33,11 @@ namespace TatehamaATS
 
         public void LEDHide()
         {
+            if (ledWindow.InvokeRequired)
+            {
+                ledWindow.Invoke(new Action(() => LEDHide()));
+                return;
+            }
             ledWindow.Hide();
             isShow = false;
         }
@@ -65,23 +73,12 @@ namespace TatehamaATS
                 }
                 catch (ATSCommonException ex)
                 {
-                    // ここで例外をキャッチしてログなどに出力する     
-                    TrainState.ATSBroken = true;
-                    Debug.WriteLine($"故障");
-                    Debug.WriteLine($"{ex.Message} {ex.InnerException}");
-                    TrainState.ATSDisplay?.SetLED("", "");
-                    TrainState.ATSDisplay?.AddState(ex.ToCode());
-                    Debug.WriteLine($"{ex.Message}");
+                    MainWindow.inspectionRecord.AddException(ex);
                 }
                 catch (Exception ex)
                 {
-                    // 他の例外もキャッチしてログなどに出力する    
-                    TrainState.ATSBroken = true;
-                    Debug.WriteLine($"故障");
-                    Debug.WriteLine($"{ex.Message} {ex.InnerException}");
                     var e = new LEDControlException(3, "", ex);
-                    TrainState.ATSDisplay?.SetLED("", "");
-                    TrainState.ATSDisplay?.AddState(e.ToCode());
+                    MainWindow.inspectionRecord.AddException(e);
                 }
                 await timer;
             }
@@ -101,7 +98,7 @@ namespace TatehamaATS
                 }
                 var deltaT = DateTime.Now - TestStart;
 
-                var LED = deltaT.Seconds % 3 + 24;
+                var LED = deltaT.Seconds % 3 + 319;
                 var Place = deltaT.Seconds / 3 % 3 + 1;
                 if (deltaT < TimeSpan.FromSeconds(9))
                 {
@@ -128,13 +125,22 @@ namespace TatehamaATS
             }
             if (TrainState.ATSDisplay != null)
             {
+
                 var display = TrainState.ATSDisplay;
                 if (display != null)
                 {
+                    if (ExceptionCodes.Count != 0)
+                    {
+                        display.L3 = ExceptionCodes;
+                    }
+                    else
+                    {
+                        display.RemoveError();
+                    }
                     if (display.L3.Count == 0)
                     {
                         L3Start = TrainState.NowTime;
-                        ledWindow.DisplayImage(1, ConvertToLEDNumber(display.L1));
+                        ledWindow.DisplayImage(1, ConvertToLEDNumber(overrideText != null ? overrideText : display.L1));
                         ledWindow.DisplayImage(2, ConvertToLEDNumber(display.L2));
                         ledWindow.DisplayImage(3, 0);
                     }
@@ -157,7 +163,7 @@ namespace TatehamaATS
                         {
                             ledWindow.DisplayImage(2, ConvertToLEDNumber(display.L2));
                         }
-                        ledWindow.DisplayImage(1, ConvertToLEDNumber(display.L1));
+                        ledWindow.DisplayImage(1, ConvertToLEDNumber(overrideText != null ? overrideText : display.L1));
                     }
                 }
                 else
@@ -258,6 +264,14 @@ namespace TatehamaATS
                     return 13;
                 case "回送":
                     return 15;
+                case "だんじり急行":
+                    return 21;
+                case "だんじり快急":
+                    return 22;
+                case "回送-2":
+                    return 23;
+                case "C特2-2":
+                    return 24;
                 case "F":
                     return 126;
                 case "P":

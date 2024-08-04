@@ -29,5 +29,13 @@
         {
             return Place.ToString() + "CE";
         }
+        public override ResetConditions ResetCondition()
+        {
+            return ResetConditions.PowerReset;
+        }
+        public override OutputBrake ToBrake()
+        {
+            return OutputBrake.EB;
+        }
     }
 }

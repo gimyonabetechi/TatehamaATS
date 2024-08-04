@@ -29,5 +29,13 @@
         {
             return Place.ToString() + "E3";
         }
+        public override ResetConditions ResetCondition()
+        {
+            return ResetConditions.StopDetection;
+        }
+        public override OutputBrake ToBrake()
+        {
+            return OutputBrake.EB;
+        }
     }
 }

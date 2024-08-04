@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System;
+using NAudio.Wave;
 
 namespace TatehamaATS
 {
@@ -16,7 +17,7 @@ namespace TatehamaATS
         /// <summary>
         /// 表示器下段：動作状態
         /// </summary>
-        internal List<string> L3 { get; private set; }
+        internal List<string> L3 { get; set; }
 
         public ATSDisplay(string L1, string L2, string[] L3)
         {
@@ -31,7 +32,7 @@ namespace TatehamaATS
         /// </summary>
         public void SetLED(string L1, string L2)
         {
-            if (TrainState.ATSBroken)
+            if (this.L3.Any(code => isErrorCode(code)))
             {
                 this.L1 = "";
                 this.L2 = "";
@@ -125,6 +126,11 @@ namespace TatehamaATS
         public void RemoveState(string removeL3)
         {
             L3.Remove(removeL3);
+        }
+
+        public void RemoveError()
+        {
+            L3.RemoveAll(s => isErrorCode(s));
         }
 
         public override string ToString()

@@ -33,7 +33,15 @@ namespace TatehamaATS.Exceptions
         }
         public override string ToCode()
         {
-            return Place.ToString() + "80";
+            return Place.ToString() + "C0";
+        }
+        public override ResetConditions ResetCondition()
+        {
+            return ResetConditions.PowerReset;
+        }
+        public override OutputBrake ToBrake()
+        {
+            return OutputBrake.EB;
         }
     }
 }

@@ -27,7 +27,15 @@
         }
         public override string ToCode()
         {
-            return Place.ToString() + "8E";
+            return Place.ToString() + "9E";
+        }
+        public override ResetConditions ResetCondition()
+        {
+            return ResetConditions.RetsubanReset;
+        }
+        public override OutputBrake ToBrake()
+        {
+            return OutputBrake.EB;
         }
     }
 }

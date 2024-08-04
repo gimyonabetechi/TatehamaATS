@@ -8,6 +8,7 @@ using OpenTetsu.Commons;
 using OpenTetsu.Commons.Train;
 using System.Diagnostics;
 using TatehamaATS.Exceptions;
+using TatehamaATS.Database;
 
 namespace TatehamaATS
 {
@@ -18,12 +19,15 @@ namespace TatehamaATS
     {
         private HttpClient _client;
         private TaskCompletionSource _tcs = new();
+        private string Token;
+        private bool isConnect;
 
         /// <summary>
         /// Transfer クラスのインスタンスを初期化する。
         /// </summary>
         public Transfer()
         {
+            isConnect = false;
             _client = new HttpClient
             {
                 BaseAddress = new Uri("http://127.0.0.1:58680")
@@ -37,17 +41,47 @@ namespace TatehamaATS
 
         public async Task PostPIData()
         {
-            // プラグインを登録
-            var plugin = new
+            while (!isConnect)
             {
-                uid = "TAKUMITE_TRAINCREW_MULTI_ATS",
-                name = "館浜M-ATS",
-                version = "1.0.0",
-                author = "Takumite Tudo",
-                description = "運転会用マルチプラグイン"
-            };
-            string registerResponse = await RegisterPluginAsync(plugin);
-            Console.WriteLine(registerResponse);
+                try
+                {
+                    // プラグインを登録
+                    var plugin = new
+                    {
+                        uid = "TAKUMITE_TRAINCREW_MULTI_ATS",
+                        name = "館浜M-ATS",
+                        version = "1.0.0",
+                        author = "Takumite Tudo",
+                        description = "運転会用マルチプラグイン"
+                    };
+                    var registerResponse = await RegisterPluginAsync(plugin);
+                    JsonDocument doc = JsonDocument.Parse(registerResponse);
+                    JsonElement root = doc.RootElement;
+                    if (root.TryGetProperty("token", out JsonElement tokenElement))
+                    {
+                        Token = tokenElement.GetString();
+                        Debug.WriteLine($"Token: {Token}");
+                        isConnect = true;
+                    }
+                    else
+                    {
+                        Debug.WriteLine("Token プロパティが見つかりませんでした。");
+                        var e = new TransferInitialzingFailure(3, "Token不明");
+                        MainWindow.inspectionRecord.AddException(e);
+                        isConnect = false;
+                        await Task.Delay(1000);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    TrainState.ATSBroken = true;
+                    Debug.WriteLine($"故障");
+                    Debug.WriteLine($"{ex.Message} {ex.InnerException}");
+                    var e = new TransferInitialzingFailure(3, "", ex);
+                    MainWindow.inspectionRecord.AddException(e);
+                    isConnect = false;
+                }
+            }
         }
 
         public async void SetRetsuban()
@@ -64,23 +98,12 @@ namespace TatehamaATS
             }
             catch (ATSCommonException ex)
             {
-                // ここで例外をキャッチしてログなどに出力する     
-                TatehamaATS.TrainState.ATSBroken = true;
-                Debug.WriteLine($"故障");
-                Debug.WriteLine($"{ex.Message} {ex.InnerException}");
-                TrainState.ATSDisplay?.SetLED("", "");
-                TrainState.ATSDisplay?.AddState(ex.ToCode());
-                Debug.WriteLine($"{ex.Message}");
+                MainWindow.inspectionRecord.AddException(ex);
             }
             catch (Exception ex)
             {
-                // 他の例外もキャッチしてログなどに出力する    
-                TrainState.ATSBroken = true;
-                Debug.WriteLine($"故障");
-                Debug.WriteLine($"{ex.Message} {ex.InnerException}");
                 var e = new TransferException(3, "", ex);
-                TrainState.ATSDisplay?.SetLED("", "");
-                TrainState.ATSDisplay?.AddState(e.ToCode());
+                MainWindow.inspectionRecord.AddException(e);
             }
         }
 
@@ -118,7 +141,7 @@ namespace TatehamaATS
             var content = new StringContent(JsonSerializer.Serialize(plugin), Encoding.UTF8, "application/json");
             HttpResponseMessage response = await _client.PostAsync("/tanuden-api/plugins", content);
             string responseBody = await response.Content.ReadAsStringAsync();
-            if(response.StatusCode == System.Net.HttpStatusCode.Conflict)
+            if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
             {
                 return responseBody;
             }
@@ -131,8 +154,28 @@ namespace TatehamaATS
         /// </summary>
         /// <param name="pluginData">送信するプラグインデータ。</param>
         /// <returns>レスポンスを含む文字列。</returns>
+        public async Task<string> SendDeleteAsync()
+        {
+            await _tcs.Task;
+            // Authorizationヘッダーを追加
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Token);
+            var content = new StringContent("");
+            HttpResponseMessage response = await _client.DeleteAsync("/tanuden-api/plugins");
+            response.EnsureSuccessStatusCode();
+            string responseBody = await response.Content.ReadAsStringAsync();
+            return responseBody;
+        }
+
+        /// <summary>
+        /// プラグインのデータを送信するメソッド。
+        /// </summary>
+        /// <param name="pluginData">送信するプラグインデータ。</param>
+        /// <returns>レスポンスを含む文字列。</returns>
         public async Task<string> SendPluginDataAsync(object pluginData)
         {
+            await _tcs.Task;
+            // Authorizationヘッダーを追加
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Token);
             var content = new StringContent(JsonSerializer.Serialize(pluginData), Encoding.UTF8, "application/json");
             HttpResponseMessage response = await _client.PostAsync("/tanuden-api/plugins/data", content);
             response.EnsureSuccessStatusCode();
@@ -148,12 +191,20 @@ namespace TatehamaATS
         public async Task<string> SendRetsubanDataAsync(object pluginData)
         {
             await _tcs.Task;
+            // Authorizationヘッダーを追加
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Token);
             var content = new StringContent(JsonSerializer.Serialize(pluginData), Encoding.UTF8, "application/json");
             HttpResponseMessage response = await _client.PostAsync("/tanuden-api/plugins/override_diagram", content);
             string responseBody = await response.Content.ReadAsStringAsync();
             Debug.WriteLine(responseBody);
             response.EnsureSuccessStatusCode();
             return responseBody;
+        }
+
+
+        class KeyData
+        {
+            public string token { get; set; }
         }
     }
 }

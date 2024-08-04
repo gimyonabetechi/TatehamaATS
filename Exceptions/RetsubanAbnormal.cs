@@ -29,5 +29,13 @@
         {
             return Place.ToString() + "90";
         }
+        public override ResetConditions ResetCondition()
+        {
+            return ResetConditions.RetsubanReset;
+        }
+        public override OutputBrake ToBrake()
+        {
+            return OutputBrake.EB;
+        }
     }
 }

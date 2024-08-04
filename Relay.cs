@@ -38,21 +38,12 @@ namespace TatehamaATS
                 }
                 catch (ATSCommonException ex)
                 {
-                    // ここで例外をキャッチしてログなどに出力する     
-                    TrainState.ATSBroken = true;
-                    Debug.WriteLine($"故障");
-                    TrainState.ATSDisplay?.SetLED("", "");
-                    TrainState.ATSDisplay?.AddState(ex.ToCode());
-                    Debug.WriteLine($"{ex.Message}");
+                    MainWindow.inspectionRecord.AddException(ex);
                 }
                 catch (Exception ex)
                 {
-                    // 他の例外もキャッチしてログなどに出力する     
-                    TrainState.ATSBroken = true;
-                    Debug.WriteLine($"{ex.Message}");
                     var e = new RelayException(3, "", ex);
-                    TrainState.ATSDisplay?.SetLED("", "");
-                    TrainState.ATSDisplay?.AddState(e.ToCode());
+                    MainWindow.inspectionRecord.AddException(e);
                 }
                 await timer;
             }
@@ -79,18 +70,19 @@ namespace TatehamaATS
                     //ゲーム中orゲームポーズ中ではない
                     if (TrainState.RouteDatabase != null)
                     {
-                        if (MainWindow.retsuban != null && MainWindow.retsuban.NowSelect != 0)
+                        if (MainWindow.retsuban != null)
                         {
                             MainWindow.retsuban.Init();
                         }
+                        TrainState.init();
                     }
-                    TrainState.init();
                 }
                 else
                 {
                     //ゲーム中orゲームポーズ中
                     if (MainWindow.retsuban != null && MainWindow.retsuban.NowSelect == 0)
                     {
+                        Debug.WriteLine("リセット");
                         MainWindow.retsuban?.Load();
                     }
                 }
@@ -140,14 +132,14 @@ namespace TatehamaATS
                         TrainState.OnTrackIndex = 0;
                         foreach (var track in TrainState.RouteDatabase.CircuitList)
                         {
-                            _ = MainWindow.signalSocket.leaveSignal(track);
                             if (track.StartMeter < nowDis && nowDis < track.EndMeter)
                             {
                                 break;
                             }
+                            _ = MainWindow.signalSocket.leaveSignal(track);
                             TrainState.OnTrackIndex++;
                         }
-                        TrackInfoGet();
+                        TrackInfoGet(TrainState.OnTrackIndex == 0);
                     }
 
                     //現在軌道回路あり
@@ -181,22 +173,37 @@ namespace TatehamaATS
                             _ = MainWindow.signalSocket.enterSignal(TrainState.BeforeTrack);
                         }
 
-
-                        if (!TrainState.OnTrack.enterComp)
+                        //進入完了処理
+                        if (TrainState.OnTrack.EndMeter - (nowDis - TrainState.TrainLength) < 140)
                         {
-                            //進入完了処理
-                            if (TrainState.OnTrack.EndMeter - (nowDis - TrainState.TrainLength) < 130)
+                            //ケツが140mならいくら何でも入りきってるで
+                            if (!TrainState.OnTrack.enterComp)
                             {
-                                //ケツが130mならいくら何でも入りきってるで
                                 _ = MainWindow.signalSocket.enteringComplete(TrainState.OnTrack);
                                 TrainState.OnTrack.enterComp = true;
                             }
-                            else if (TrainState.OnTrack.EndMeter - (nowDis - TrainState.TrainLength) < 170 && TrainState.TrainSpeed == 0)
+                        }
+                        else if (TrainState.OnTrack.EndMeter - (nowDis - TrainState.TrainLength) < 200 && TrainState.TrainSpeed == 0)
+                        {
+                            //ケツが200m以内で停止したら入線しきってると思う    
+                            if (!TrainState.OnTrack.enterComp)
                             {
-                                //ケツが170m以内で停止したら入線しきってると思う
                                 _ = MainWindow.signalSocket.enteringComplete(TrainState.OnTrack);
                                 TrainState.OnTrack.enterComp = true;
                             }
+                        }
+                        else if (TrainState.OnTrackIndex == 0)
+                        {
+                            //0番軌道回路の場合は強制OK
+                            if (!TrainState.OnTrack.enterComp)
+                            {
+                                _ = MainWindow.signalSocket.enteringComplete(TrainState.OnTrack);
+                                TrainState.OnTrack.enterComp = true;
+                            }
+                        }
+                        else
+                        {
+                            TrainState.OnTrack.enterComp = false;
                         }
                     }
                     if (TrainState.BeforeTrack != null)
@@ -222,14 +229,22 @@ namespace TatehamaATS
         }
 
 
-        private void TrackInfoGet()
+        private void TrackInfoGet(bool first = false)
         {
             if (TrainState.RouteDatabase != null && TrainState.OnTrackIndex != null)
             {
                 if ((int)TrainState.OnTrackIndex < TrainState.RouteDatabaseCount)
                 {
                     TrainState.OnTrack = TrainState.RouteDatabase.CircuitList[(int)TrainState.OnTrackIndex];
-                    _ = MainWindow.signalSocket.enterSignal(TrainState.OnTrack);
+                    if (first)
+                    {
+                        _ = MainWindow.signalSocket.enteringComplete(TrainState.OnTrack);
+                        TrainState.OnTrack.enterComp = true;
+                    }
+                    else
+                    {
+                        _ = MainWindow.signalSocket.enterSignal(TrainState.OnTrack);
+                    }
                 }
                 if ((int)TrainState.OnTrackIndex + 1 < TrainState.RouteDatabaseCount)
                 {

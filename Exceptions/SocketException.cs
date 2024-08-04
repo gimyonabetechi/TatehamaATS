@@ -29,5 +29,13 @@
         {
             return Place.ToString() + "EF";
         }
+        public override ResetConditions ResetCondition()
+        {
+            return ResetConditions.PowerReset;
+        }
+        public override OutputBrake ToBrake()
+        {
+            return OutputBrake.EB;
+        }
     }
 }

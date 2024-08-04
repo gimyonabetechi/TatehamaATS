@@ -54,23 +54,9 @@ namespace TatehamaATS.Signal
                 {
                     imageChenge();
                 }
-                catch (ATSCommonException ex)
-                {
-                    // ここで例外をキャッチしてログなどに出力する     
-                    TrainState.ATSBroken = true;
-                    Debug.WriteLine($"故障");
-                    TrainState.ATSDisplay?.SetLED("", "");
-                    TrainState.ATSDisplay?.AddState(ex.ToCode());
-                    Debug.WriteLine($"{ex.Message}");
-                }
                 catch (Exception ex)
                 {
-                    // 他の例外もキャッチしてログなどに出力する     
-                    TrainState.ATSBroken = true;
-                    Debug.WriteLine($"{ex.Message}");
-                    var e = new CsharpException(3, "", ex);
-                    TrainState.ATSDisplay?.SetLED("", "");
-                    TrainState.ATSDisplay?.AddState(e.ToCode());
+                    MainWindow.inspectionRecord.AddException(ex);
                 }
                 await timer;
             }

@@ -1,4 +1,5 @@
 ﻿using TatehamaATS.Database;
+using TatehamaATS.Exceptions;
 using TrainCrew;
 
 namespace TatehamaATS
@@ -25,6 +26,10 @@ namespace TatehamaATS
         /// 自車列番
         /// </summary>
         static public string? TrainDiaName;
+        /// <summary>
+        /// 自車両数
+        /// </summary>
+        static public int? TrainCar;
         /// <summary>
         /// 自車長さ
         /// </summary>

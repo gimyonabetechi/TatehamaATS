@@ -29,5 +29,13 @@
         {
             return Place.ToString() + "9C";
         }
+        public override ResetConditions ResetCondition()
+        {
+            return ResetConditions.StopDetection_MasconEB;
+        }
+        public override OutputBrake ToBrake()
+        {
+            return OutputBrake.EB;
+        }
     }
 }

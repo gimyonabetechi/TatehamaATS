@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Data.Common;
+using System.Diagnostics;
 using TatehamaATS.Exceptions;
 using TatehamaATS.Signal;
 
@@ -6,12 +7,13 @@ namespace TatehamaATS
 {
     public partial class MainWindow : Form
     {
-        private ControlLED controlLED;
+        static internal InspectionRecord inspectionRecord = new InspectionRecord();
         private SignalWindow signalWindow;
         private Relay relay;
         static internal SignalSocket signalSocket = new SignalSocket();
         static internal Retsuban retsuban;
         static internal Transfer transfer = new Transfer();
+        static internal ControlLED controlLED;
 
         public MainWindow()
         {
@@ -19,30 +21,14 @@ namespace TatehamaATS
             {
                 InitializeComponent();
                 TrainState.init();
-                controlLED = new ControlLED();
                 relay = new Relay();
                 signalWindow = new SignalWindow();
                 retsuban = new Retsuban(RetsubanText, CarText);
-            }
-            catch (ATSCommonException ex)
-            {
-                // ここで例外をキャッチしてログなどに出力する     
-                TrainState.ATSBroken = true;
-                Debug.WriteLine($"故障");
-                Debug.WriteLine($"{ex.Message} {ex.InnerException}");
-                TrainState.ATSDisplay?.SetLED("", "");
-                TrainState.ATSDisplay?.AddState(ex.ToCode());
-                Debug.WriteLine($"{ex.Message}");
+                controlLED = new ControlLED();
             }
             catch (Exception ex)
             {
-                // 他の例外もキャッチしてログなどに出力する    
-                TrainState.ATSBroken = true;
-                Debug.WriteLine($"故障");
-                Debug.WriteLine($"{ex.Message} {ex.InnerException}");
-                var e = new CsharpException(3, "", ex);
-                TrainState.ATSDisplay?.SetLED("", "");
-                TrainState.ATSDisplay?.AddState(e.ToCode());
+                inspectionRecord.AddException(ex);
             }
         }
 
@@ -64,7 +50,7 @@ namespace TatehamaATS
             //故障復帰
             if (TrainState.ATSBroken && TrainState.TrainSpeed < 1.0 && TrainState.TrainBnotch >= 8)
             {
-                TrainState.ATSBroken = false;
+                MainWindow.inspectionRecord.ATSReset = true;
             }
         }
 
@@ -138,7 +124,7 @@ namespace TatehamaATS
 
         private void RetsubanRin_Click(object sender, EventArgs e)
         {
-            retsuban.addText("臨");
+            retsuban.addText("X");
         }
 
         private void RetsubanC_Click(object sender, EventArgs e)

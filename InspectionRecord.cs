@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using TatehamaATS.Exceptions;
 
 namespace TatehamaATS
@@ -11,7 +12,7 @@ namespace TatehamaATS
         /// <summary>
         /// 故障情報マスター
         /// </summary>
-        internal static Dictionary<string, Exception> exceptions = new Dictionary<string, Exception>();
+        internal static Dictionary<string, ATSCommonException> exceptions = new Dictionary<string, ATSCommonException>();
         /// <summary>
         /// 故障時間
         /// </summary>
@@ -20,11 +21,13 @@ namespace TatehamaATS
         /// <summary>
         /// 故障発生から故障復帰までの最低時間
         /// </summary>
-        private static TimeSpan resetTime = TimeSpan.FromSeconds(1);
+        private static TimeSpan resetTime = TimeSpan.FromSeconds(3);
 
-        private static bool ExceptionReset;
-        private static bool StopDetection_MasconEB;
-        private static bool PowerReset;
+        public bool RetsubanReset;
+        private bool StopDetection;
+        private bool MasconEB;
+        public bool ATSReset;
+        private bool PowerReset;
 
         /// <summary>
         /// 検査記録部
@@ -33,7 +36,39 @@ namespace TatehamaATS
         {
             exceptions.Clear();
             exceptionsTime.Clear();
+            RetsubanReset = false;
+            StopDetection = false;
+            MasconEB = false;
+            ATSReset = false;
+            PowerReset = false;
+            Task.Run(() => StartDisplayUpdateLoop());
         }
+
+        /// <summary>
+        /// 非同期で表示器を更新するループを開始する
+        /// </summary>
+        private async void StartDisplayUpdateLoop()
+        {
+            while (true)
+            {
+                var timer = Task.Delay(20);
+                try
+                {
+                    ResetException();
+                }
+                catch (ATSCommonException ex)
+                {
+                    MainWindow.inspectionRecord.AddException(ex);
+                }
+                catch (Exception ex)
+                {
+                    var e = new LEDControlException(3, "", ex);
+                    MainWindow.inspectionRecord.AddException(e);
+                }
+                await timer;
+            }
+        }
+
 
         /// <summary>
         /// 故障追加
@@ -41,9 +76,13 @@ namespace TatehamaATS
         /// <param name="exception"></param>
         internal void AddException(ATSCommonException exception)
         {
-            exceptions.Add(exception.ToCode(), exception);
-            exceptionsTime.Add(exception.ToCode(), DateTime.Now);
-            
+            TrainState.ATSBroken = true;
+            Debug.WriteLine($"故障");
+            Debug.WriteLine($"{exception.Message} {exception.InnerException}");
+            exceptions[exception.ToCode()] = exception;
+            exceptionsTime[exception.ToCode()] = DateTime.Now;
+            //exceptions.Add(exception.ToCode(), exception);
+            //exceptionsTime.Add(exception.ToCode(), DateTime.Now);
         }
 
         /// <summary>
@@ -52,18 +91,52 @@ namespace TatehamaATS
         /// <param name="exception"></param>
         internal void AddException(Exception exception)
         {
-            exceptions.Add("39F", exception);
+            exceptions.Add("39F", new CsharpException(3, exception.ToString()));
             exceptionsTime.Add("39F", DateTime.Now);
         }
 
         /// <summary>
-        /// リセット条件達成時
+        /// リセット条件達成確認
         /// </summary>
-        internal void ResetException(ResetConditions resetConditions)
+        internal void ResetException()
         {
-            if (ExceptionReset)
+            StopDetection = TrainState.TrainSpeed == 0;
+            MasconEB = TrainState.TrainBnotch == 8;
+            foreach (var ex in exceptions)
             {
-                
+                string key = ex.Key;
+                TimeSpan time = DateTime.Now - exceptionsTime[key];
+
+                if (time < resetTime)
+                {
+                    //故障復帰最低時間を下回っている場合無視
+                    continue;
+                }
+                switch (ex.Value.ResetCondition())
+                {
+                    case ResetConditions.ExceptionReset:
+                        exceptions.Remove(key);
+                        break;
+                    case ResetConditions.RetsubanReset:
+                        if (RetsubanReset) exceptions.Remove(key);
+                        break;
+                    case ResetConditions.StopDetection:
+                        if (StopDetection) exceptions.Remove(key);
+                        break;
+                    case ResetConditions.StopDetection_MasconEB:
+                        if (StopDetection && MasconEB) exceptions.Remove(key);
+                        break;
+                    case ResetConditions.StopDetection_MasconEB_ATSReset:
+                        if (StopDetection && MasconEB && ATSReset) exceptions.Remove(key);
+                        break;
+                }
+            }
+            RetsubanReset = false;
+            ATSReset = false;
+
+            if (MainWindow.controlLED != null)
+            {
+                MainWindow.controlLED.ExceptionCodes = exceptions.Values.Select(e => e.ToCode()).ToList();
             }
         }
     }

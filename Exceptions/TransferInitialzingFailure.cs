@@ -1,33 +1,33 @@
 ﻿namespace TatehamaATS.Exceptions
 {
     /// <summary>
-    /// B0:LED表示番号異常
+    /// BF:LED制御部未定義故障
     /// </summary>
-    internal class LEDDisplayNumberAbnormal : ATSCommonException
+    internal class TransferInitialzingFailure : ATSCommonException
     {
         /// <summary>
-        /// B0:LED表示番号異常
+        /// 85:伝送部初期化失敗
         /// </summary>
-        public LEDDisplayNumberAbnormal(int place) : base(place)
+        public TransferInitialzingFailure(int place) : base(place)
         {
         }
         /// <summary>
-        /// B0:LED表示番号異常
+        /// 85:伝送部初期化失敗
         /// </summary>
-        public LEDDisplayNumberAbnormal(int place, string message)
+        public TransferInitialzingFailure(int place, string message)
             : base(place, message)
         {
         }
         /// <summary>
-        /// B0:LED表示番号異常
+        /// 85:伝送部初期化失敗
         /// </summary>
-        public LEDDisplayNumberAbnormal(int place, string message, Exception inner)
+        public TransferInitialzingFailure(int place, string message, Exception inner)
             : base(place, message, inner)
         {
         }
         public override string ToCode()
         {
-            return Place.ToString() + "B0";
+            return Place.ToString() + "85";
         }
         public override ResetConditions ResetCondition()
         {
@@ -35,8 +35,7 @@
         }
         public override OutputBrake ToBrake()
         {
-            return OutputBrake.None;
+            return OutputBrake.EB;
         }
     }
 }
-

@@ -27,7 +27,15 @@
         }
         public override string ToCode()
         {
-            return Place.ToString() + "80";
+            return Place.ToString() + "9F";
+        }
+        public override ResetConditions ResetCondition()
+        {
+            return ResetConditions.StopDetection_MasconEB;
+        }
+        public override OutputBrake ToBrake()
+        {
+            return OutputBrake.EB;
         }
     }
 }

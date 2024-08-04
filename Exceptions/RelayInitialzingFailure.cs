@@ -35,5 +35,13 @@ namespace TatehamaATS.Exceptions
         {
             return Place.ToString() + "84";
         }
+        public override ResetConditions ResetCondition()
+        {
+            return ResetConditions.PowerReset;
+        }
+        public override OutputBrake ToBrake()
+        {
+            return OutputBrake.EB;
+        }
     }
 }
