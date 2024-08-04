@@ -44,10 +44,6 @@ namespace TatehamaATS
                     CarText.Text += text;
                 }
             }
-            catch (ATSCommonException ex)
-            {
-                HandleException(ex);
-            }
             catch (Exception ex)
             {
                 HandleException(ex);
@@ -64,7 +60,6 @@ namespace TatehamaATS
                     try
                     {
                         TrainState.TrainDiaName = RetsubanText.Text;
-                        MainWindow.transfer.SetRetsuban();
                         NowSelect++;
                         PlayLoopingSound(set_trainsetlen);
                     }
@@ -81,6 +76,7 @@ namespace TatehamaATS
                         var car = int.Parse(CarText.Text);
                         if (2 <= car && car <= 10)
                         {
+                            TrainState.TrainCar = car;
                             TrainState.TrainLength = car * 20 + 5;
                             PlaySound(set_complete);
                         }
@@ -89,16 +85,14 @@ namespace TatehamaATS
                             throw new CarAbnormal(3, "2-10範囲外Retsuban.cs@Enter");
                         }
                         TrainState.chengeDiaName = true;
+                        MainWindow.transfer.SetRetsuban();
+                        MainWindow.inspectionRecord.RetsubanReset = true;
                     }
                     catch (Exception ex)
                     {
                         throw new CarAbnormal(3, "Retsuban.cs@Enter", ex);
                     }
                 }
-            }
-            catch (ATSCommonException ex)
-            {
-                HandleException(ex);
             }
             catch (Exception ex)
             {
@@ -125,10 +119,6 @@ namespace TatehamaATS
                         CarText.Text = CarText.Text.Substring(0, CarText.Text.Length - 1);
                     }
                 }
-            }
-            catch (ATSCommonException ex)
-            {
-                HandleException(ex);
             }
             catch (Exception ex)
             {
@@ -174,28 +164,44 @@ namespace TatehamaATS
 
         private void HandleException(Exception ex)
         {
-            TrainState.ATSBroken = true;
-            Debug.WriteLine($"故障");
-            Debug.WriteLine($"{ex.Message} {ex.InnerException}");
-            TrainState.ATSDisplay?.SetLED("", "");
-            TrainState.ATSDisplay?.AddState(ex is ATSCommonException commonEx ? commonEx.ToCode() : new CsharpException(3, "", ex).ToCode());
+            MainWindow.inspectionRecord.AddException(ex);
         }
 
 
         public void Init()
         {
             NowSelect = 0;
-            RetsubanText.Text = "";
-            CarText.Text = "";
-            PlaySound(beep3);
+            try
+            {
+                RetsubanText.Invoke((MethodInvoker)(() =>
+                {
+                    RetsubanText.Text = "";
+                    CarText.Text = "";
+                }));
+                PlaySound(beep3);
+            }
+            catch(InvalidOperationException ex)
+            {
+
+            }
         }
 
         public void Load()
         {
             NowSelect = 1;
-            RetsubanText.Text = "";
-            CarText.Text = "";
-            PlayLoopingSound(set_trainnum);
+            try
+            {
+                RetsubanText.Invoke((MethodInvoker)(() =>
+                {
+                    RetsubanText.Text = "";
+                    CarText.Text = "";
+                }));
+                PlayLoopingSound(set_trainnum);
+            }
+            catch (InvalidOperationException ex)
+            {
+
+            }
         }
     }
 }

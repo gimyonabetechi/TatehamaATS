@@ -58,7 +58,7 @@ namespace TatehamaATS.Database
 
     public class TrackCircuitInfo
     {
-        public string Name { get; }
+        public string Name { get; private set; }
         public double StartMeter { get; private set; }
         public double EndMeter { get; private set; }
         public SignalLight Signal { get; set; }
@@ -83,6 +83,11 @@ namespace TatehamaATS.Database
                 new OnCarDBTrackDataAbnormal(3, "TrackCircuitInfo.cs@TrackCircuitInfo()", ex);
             }
             SignalType = signalType;
+        }
+
+        public void ChengeName(string name)
+        {
+            Name = name;
         }
 
         public override string ToString()

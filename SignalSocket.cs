@@ -39,7 +39,7 @@ namespace TatehamaATS
                 //Debug.WriteLine("return");
                 return;
             }
-            //Debug.WriteLine($"進入：{track}");
+            Debug.WriteLine($"進入：{track}");
             try
             {
                 var data = new CommonData
@@ -75,7 +75,7 @@ namespace TatehamaATS
                 //Debug.WriteLine("return");
                 return;
             }
-            //Debug.WriteLine($"進出：{track}");
+            Debug.WriteLine($"進出：{track}");
             try
             {
                 var data = new CommonData
@@ -110,7 +110,7 @@ namespace TatehamaATS
                 //Debug.WriteLine("return");
                 return;
             }
-            //Debug.WriteLine($"進出：{track}");
+            Debug.WriteLine($"進完：{track}");
             try
             {
                 var data = new CommonData
@@ -141,22 +141,32 @@ namespace TatehamaATS
 
         private async Task ConnectAndProcessAsync()
         {
-            try
+            while (true)
             {
-                await client.ConnectAsync();
-                isSocketConnect = true;
-            }
-            catch (Exception ex)
-            {
-                isSocketConnect = false;
-                Debug.WriteLine($"再接続失敗: {ex.Message}");
-                throw new SocketException(3, "SignalSocket.cs@ConnectAndProcessAsync()", ex);
+                try
+                {
+                    if (isSocketConnect == true)
+                    {
+                        await Task.Delay(5000);
+                    }
+                    else
+                    {
+                        await client.ConnectAsync();
+                        isSocketConnect = true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    isSocketConnect = false;
+                    var e = new SocketException(3, "SignalSocket.cs@ConnectAndProcessAsync()", ex);
+                    MainWindow.inspectionRecord.AddException(e);
+                }
             }
         }
 
         private async Task GetRoute()
         {
-            if (TrainState.TrainDiaName == null)
+            if (TrainState.TrainDiaName == null && TrainState.TrainCar == null)
             {
                 return;
             }
@@ -167,7 +177,8 @@ namespace TatehamaATS
             {
                 diaName = RetsubanTable[diaName];
             }
-            await client.EmitAsync("getRoute", diaName);
+            Debug.WriteLine($"{diaName}_{TrainState.TrainCar}");
+            await client.EmitAsync("getRoute", $"{diaName}_{TrainState.TrainCar}");
             var ecs = new TaskCompletionSource<List<RawTrackCircuitInfo>>();
             client.On("getRouteResult", response =>
             {
@@ -176,8 +187,8 @@ namespace TatehamaATS
             });
             try
             {
-                // そんなに時間かからないと思うけど一応5秒待つ
-                var route = await ecs.Task.WaitAsync(TimeSpan.FromSeconds(5));
+                //故障復帰最低要件の関係で2秒待ち
+                var route = await ecs.Task.WaitAsync(TimeSpan.FromSeconds(2));
                 client.Off("route");
                 TrainState.RouteDatabase = new RouteDatabase();
                 TrainState.RouteDatabase.AddTrack(new TrackCircuitInfo("初期在線", -200d, route[0].startMeter, SignalLight.N, SignalType.Yudo_2));
@@ -185,6 +196,53 @@ namespace TatehamaATS
                 {
                     TrainState.RouteDatabase.AddTrack(track.toTrackCircuitInfo());
                 }
+
+                //通常ダイヤ用特定列番上書き   
+                switch (diaName)
+                {
+
+                }
+
+
+                //ダイヤ運転会用特定列番上書き
+                switch (TrainState.TrainDiaName)
+                {
+                    case "1110A":
+                        MainWindow.controlLED.overrideText = "C特1";
+                        break;
+                    case "1017A":
+                        MainWindow.controlLED.overrideText = "C特2-2";
+                        TrainState.RouteDatabase.CircuitList[35].ChengeName("館浜下り場内1LB");
+                        break;
+                    case "回1295":
+                    case "回1295X":
+                    case "回1281":
+                        MainWindow.controlLED.overrideText = "回送-2";
+                        TrainState.RouteDatabase.CircuitList[34].ChengeName("館浜下り場内1LB");
+                        break;
+                    case "回1294":
+                    case "回1294X":
+                    case "回1280":
+                        MainWindow.controlLED.overrideText = "回送-2";
+                        TrainState.RouteDatabase.CircuitList[0].ChengeName("館浜下り場内1LB");
+                        TrainState.RouteDatabase.CircuitList[1].ChengeName("館浜上り出発2R");
+                        break;
+                    case "1295B":
+                    case "1295BX":
+                    case "1281B":
+                        MainWindow.controlLED.overrideText = "だんじり急行";
+                        TrainState.RouteDatabase.CircuitList[34].ChengeName("館浜下り場内1LB");
+                        break;
+                    case "1294KX":
+                        MainWindow.controlLED.overrideText = "だんじり快急";
+                        TrainState.RouteDatabase.CircuitList[0].ChengeName("館浜下り場内1LB");
+                        TrainState.RouteDatabase.CircuitList[1].ChengeName("館浜上り出発2R");
+                        break;
+                    default:
+                        MainWindow.controlLED.overrideText = null;
+                        break;
+                }
+
                 TrainState.chengeDiaName = false;
                 TrainState.RouteDatabaseCount = TrainState.RouteDatabase.CircuitList.Count;
                 TrainState.OnTrackIndex = null;
@@ -192,7 +250,7 @@ namespace TatehamaATS
             }
             catch (TimeoutException ex)
             {
-                throw new SocketTimeOutException(3, "SignalSocket.cs@GetRoute()", ex);
+                throw new OnCarDBDataGetException(3, "SignalSocket.cs@GetRoute()", ex);
             }
             catch (Exception ex)
             {
@@ -223,22 +281,12 @@ namespace TatehamaATS
                 }
                 catch (ATSCommonException ex)
                 {
-                    TrainState.ATSBroken = true;
-                    Debug.WriteLine($"故障");
-                    Debug.WriteLine($"{ex}");
-                    Debug.WriteLine($"{ex.InnerException}");
-                    TrainState.ATSDisplay?.SetLED("", "");
-                    TrainState.ATSDisplay?.AddState(ex.ToCode());
+                    MainWindow.inspectionRecord.AddException(ex);
                 }
                 catch (Exception ex)
                 {
-                    TrainState.ATSBroken = true;
-                    Debug.WriteLine($"故障");
-                    Debug.WriteLine($"{ex}");
-                    Debug.WriteLine($"{ex.InnerException}");
-                    var e = new SocketCountaException(3, "", ex);
-                    TrainState.ATSDisplay?.SetLED("", "");
-                    TrainState.ATSDisplay?.AddState(e.ToCode());
+                    var e = new SocketException(3, "", ex);
+                    MainWindow.inspectionRecord.AddException(e);
                 }
                 await timer;
             }
@@ -248,14 +296,14 @@ namespace TatehamaATS
         {
             if (TrainState.TrainDiaName == null || TrainState.TrainDiaName == "" || TrainState.NextTrack == null)
             {
-                Debug.WriteLine("return");
+                //Debug.WriteLine("return");
                 lastNormalResponse = DateTime.Now;
                 return;
             }
             //Debug.WriteLine(TrainState.BeforeTrack);
             //Debug.WriteLine(TrainState.OnTrack);
             //Debug.WriteLine(TrainState.OnTrackIndex);
-            Debug.WriteLine(TrainState.NextTrack);
+            //Debug.WriteLine(TrainState.NextTrack);
             try
             {
                 var data = new CommonData
@@ -346,10 +394,13 @@ namespace TatehamaATS
             {"1184C", "1284C"},
             {"回7290", "回862"},
             {"回7291", "回607A"},
-            {"回1295", "555B"},
-            {"1295B", "555B"},
-            {"回1294", "796K"},
-            {"1294K", "796K"},
+            {"回1295", "回607A"},
+            {"1295B", "回607A"},
+            {"回1295X", "回607A"},
+            {"1295BX", "回607A"},
+            {"回1294", "回862"},
+            {"回1294X", "796K"},
+            {"1294KX", "796K"},
             {"回1281", "回607A"},
             {"1281B", "回607A"},
             {"回1280", "回862"},

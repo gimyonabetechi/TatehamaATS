@@ -29,5 +29,9 @@
         {
             return Place.ToString() + "91";
         }
+        public override ResetConditions ResetCondition()
+        {
+            return ResetConditions.PowerReset;
+        }
     }
 }
