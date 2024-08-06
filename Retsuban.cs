@@ -77,7 +77,7 @@ namespace TatehamaATS
                         if (2 <= car && car <= 10)
                         {
                             TrainState.TrainCar = car;
-                            TrainState.TrainLength = car * 20 + 5;
+                            TrainState.TrainLength = (int)(car * 20.5 - 3 + 1);
                             PlaySound(set_complete);
                         }
                         else
