@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using TatehamaATS.Database;
 using TatehamaATS.Exceptions;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
 namespace TatehamaATS
 {
@@ -192,6 +193,7 @@ namespace TatehamaATS
                 client.Off("route");
                 TrainState.RouteDatabase = new RouteDatabase();
                 TrainState.RouteDatabase.AddTrack(new TrackCircuitInfo("初期在線", -200d, route[0].startMeter, SignalLight.N, SignalType.Yudo_2));
+                route[route.Count - 1].endMeter += 20;
                 foreach (var track in route)
                 {
                     TrainState.RouteDatabase.AddTrack(track.toTrackCircuitInfo());

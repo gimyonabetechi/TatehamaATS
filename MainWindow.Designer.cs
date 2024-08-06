@@ -80,7 +80,7 @@
             statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1, TanudenStatus, toolStripStatusLabel2, SignalStatus, toolStripStatusLabel3, LEDStatus, toolStripStatusLabel4, SigWinStatus, toolStripStatusLabel5 });
             statusStrip1.Location = new Point(0, 283);
             statusStrip1.Name = "statusStrip1";
-            statusStrip1.Size = new Size(498, 25);
+            statusStrip1.Size = new Size(554, 25);
             statusStrip1.TabIndex = 0;
             statusStrip1.Text = "statusStrip1";
             // 
@@ -145,7 +145,7 @@
             toolStripStatusLabel5.BorderSides = ToolStripStatusLabelBorderSides.Left | ToolStripStatusLabelBorderSides.Right;
             toolStripStatusLabel5.Name = "toolStripStatusLabel5";
             toolStripStatusLabel5.Size = new Size(75, 20);
-            toolStripStatusLabel5.Text = "Ver0.3.2";
+            toolStripStatusLabel5.Text = "Ver0.4.0";
             // 
             // LEDWindowButton
             // 
@@ -416,7 +416,7 @@
             panel2.Controls.Add(RetsubanText);
             panel2.Controls.Add(panel1);
             panel2.Controls.Add(label3);
-            panel2.Location = new Point(217, 8);
+            panel2.Location = new Point(273, 8);
             panel2.Name = "panel2";
             panel2.Size = new Size(269, 272);
             panel2.TabIndex = 8;
@@ -494,7 +494,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 16F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(498, 308);
+            ClientSize = new Size(554, 308);
             Controls.Add(panel2);
             Controls.Add(SignalWindowButton);
             Controls.Add(ATSResetButton);

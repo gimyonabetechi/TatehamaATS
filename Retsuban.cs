@@ -180,7 +180,7 @@ namespace TatehamaATS
                 }));
                 PlaySound(beep3);
             }
-            catch(InvalidOperationException ex)
+            catch (InvalidOperationException ex)
             {
 
             }
@@ -191,12 +191,12 @@ namespace TatehamaATS
             NowSelect = 1;
             try
             {
+                PlayLoopingSound(set_trainnum);
                 RetsubanText.Invoke((MethodInvoker)(() =>
                 {
                     RetsubanText.Text = "";
                     CarText.Text = "";
                 }));
-                PlayLoopingSound(set_trainnum);
             }
             catch (InvalidOperationException ex)
             {

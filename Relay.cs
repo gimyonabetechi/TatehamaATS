@@ -171,7 +171,7 @@ namespace TatehamaATS
                                 TrainState.BeforeTrack = TrainState.RouteDatabase.CircuitList[(int)TrainState.OnTrackIndex - 1];
                             }
                             TrackInfoGet();
-                            //Debug.WriteLine("現在在線を先頭が越えたら");
+                            Debug.WriteLine("現在在線を先頭が越えたら");
                             _ = MainWindow.signalSocket.enterSignal(TrainState.OnTrack);
                         }
                         //在線を先頭が踏んで戻ったら 
@@ -179,14 +179,14 @@ namespace TatehamaATS
                         {
                             TrainState.OnTrackIndex--;
                             TrackInfoGet();
-                            //Debug.WriteLine("在線を先頭が踏んで戻ったら");
+                            Debug.WriteLine("在線を先頭が踏んで戻ったら");
                             _ = MainWindow.signalSocket.leaveSignal(TrainState.NextTrack);
                         }
                         //在線を最後尾が踏んで戻ったら 
                         if (TrainState.OnTrack.StartMeter > nowDis - TrainState.TrainLength && TrainState.BeforeTrack == null)
                         {
                             TrainState.BeforeTrack = TrainState.RouteDatabase.CircuitList[(int)TrainState.OnTrackIndex - 1];
-                            //Debug.WriteLine("在線を最後尾が踏んで戻ったら");
+                            Debug.WriteLine("在線を最後尾が踏んで戻ったら");
                             _ = MainWindow.signalSocket.enterSignal(TrainState.BeforeTrack);
                         }
 
@@ -228,7 +228,7 @@ namespace TatehamaATS
                         //前在線を最後尾が抜けたら  
                         if (TrainState.BeforeTrack.EndMeter < nowDis - TrainState.TrainLength)
                         {
-                            //Debug.WriteLine("前在線を最後尾が抜けたら");
+                            Debug.WriteLine("前在線を最後尾が抜けたら");
                             _ = MainWindow.signalSocket.leaveSignal(TrainState.BeforeTrack);
                             TrainState.BeforeTrack = null;
                         }
@@ -257,10 +257,6 @@ namespace TatehamaATS
                     {
                         _ = MainWindow.signalSocket.enteringComplete(TrainState.OnTrack);
                         TrainState.OnTrack.enterComp = true;
-                    }
-                    else
-                    {
-                        _ = MainWindow.signalSocket.enterSignal(TrainState.OnTrack);
                     }
                 }
                 if ((int)TrainState.OnTrackIndex + 1 < TrainState.RouteDatabaseCount)
