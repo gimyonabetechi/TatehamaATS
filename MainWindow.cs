@@ -166,5 +166,10 @@ namespace TatehamaATS
         {
             retsuban.Enter();
         }
+
+        private void MainWindow_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -197,13 +197,6 @@ namespace TatehamaATS
                     TrainState.RouteDatabase.AddTrack(track.toTrackCircuitInfo());
                 }
 
-                //通常ダイヤ用特定列番上書き   
-                switch (diaName)
-                {
-
-                }
-
-
                 //ダイヤ運転会用特定列番上書き
                 switch (TrainState.TrainDiaName)
                 {
@@ -364,6 +357,12 @@ namespace TatehamaATS
         }
 
         private Dictionary<string, string> RetsubanTable = new Dictionary<string, string> {
+            //通常使用部分       
+            {"551", "回451"},
+            {"581C", "581"},
+            {"592", "592C"},
+
+            //運転会用部分
             {"回1013A", "回1105A"},
             {"1112A", "1204A"},
             {"1017A", "1107A"},

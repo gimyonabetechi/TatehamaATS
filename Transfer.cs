@@ -50,7 +50,7 @@ namespace TatehamaATS
                     {
                         uid = "TAKUMITE_TRAINCREW_MULTI_ATS",
                         name = "館浜M-ATS",
-                        version = "1.0.0",
+                        version = "0.3.2",
                         author = "Takumite Tudo",
                         description = "運転会用マルチプラグイン"
                     };
@@ -69,7 +69,6 @@ namespace TatehamaATS
                         var e = new TransferInitialzingFailure(3, "Token不明");
                         MainWindow.inspectionRecord.AddException(e);
                         isConnect = false;
-                        await Task.Delay(1000);
                     }
                 }
                 catch (Exception ex)
@@ -81,6 +80,7 @@ namespace TatehamaATS
                     MainWindow.inspectionRecord.AddException(e);
                     isConnect = false;
                 }
+                await Task.Delay(1000);
             }
         }
 

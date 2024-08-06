@@ -31,7 +31,7 @@ namespace TatehamaATS
         {
             while (true)
             {
-                var timer = Task.Delay(20);
+                var timer = Task.Delay(50);
                 try
                 {
                     Elapse();
@@ -70,10 +70,27 @@ namespace TatehamaATS
                     //ゲーム中orゲームポーズ中ではない
                     if (TrainState.RouteDatabase != null)
                     {
-                        if (MainWindow.retsuban != null)
+                        if (TrainState.OnTrackIndex == TrainState.RouteDatabase.CircuitList.Count - 1 && TrainState.OnTrack != null)
                         {
-                            MainWindow.retsuban.Init();
+                            //最終トラック
+                            switch(TrainState.OnTrack.Name){
+                                case "館浜下り場内1LA":
+                                case "館浜下り場内1LB":
+                                case "館浜下り場内1LC":
+                                case "館浜下り場内1LD":
+                                case "新野崎入換111R":
+                                case "大道寺上り場内8R":
+                                case "大道寺入換105R":
+                                case "大道寺入換110R":
+                                    //在線解除しない
+                                    break;
+                                default:
+                                    _ = MainWindow.signalSocket.leaveSignal(TrainState.OnTrack);
+                                    break;
+                            }
+
                         }
+                        MainWindow.retsuban?.Init();
                         TrainState.init();
                     }
                 }
@@ -174,9 +191,9 @@ namespace TatehamaATS
                         }
 
                         //進入完了処理
-                        if (TrainState.OnTrack.EndMeter - (nowDis - TrainState.TrainLength) < 140)
+                        if (TrainState.OnTrack.EndMeter - (nowDis - TrainState.TrainLength) < 150)
                         {
-                            //ケツが140mならいくら何でも入りきってるで
+                            //ケツが150mならいくら何でも入りきってるで
                             if (!TrainState.OnTrack.enterComp)
                             {
                                 _ = MainWindow.signalSocket.enteringComplete(TrainState.OnTrack);

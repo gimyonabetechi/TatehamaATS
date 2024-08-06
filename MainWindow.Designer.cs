@@ -78,9 +78,9 @@
             // 
             statusStrip1.Font = new Font("ＭＳ ゴシック", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1, TanudenStatus, toolStripStatusLabel2, SignalStatus, toolStripStatusLabel3, LEDStatus, toolStripStatusLabel4, SigWinStatus, toolStripStatusLabel5 });
-            statusStrip1.Location = new Point(0, 455);
+            statusStrip1.Location = new Point(0, 283);
             statusStrip1.Name = "statusStrip1";
-            statusStrip1.Size = new Size(914, 25);
+            statusStrip1.Size = new Size(498, 25);
             statusStrip1.TabIndex = 0;
             statusStrip1.Text = "statusStrip1";
             // 
@@ -144,12 +144,12 @@
             // 
             toolStripStatusLabel5.BorderSides = ToolStripStatusLabelBorderSides.Left | ToolStripStatusLabelBorderSides.Right;
             toolStripStatusLabel5.Name = "toolStripStatusLabel5";
-            toolStripStatusLabel5.Size = new Size(107, 20);
-            toolStripStatusLabel5.Text = "Ver0.3.2-rc4";
+            toolStripStatusLabel5.Size = new Size(75, 20);
+            toolStripStatusLabel5.Text = "Ver0.3.2";
             // 
             // LEDWindowButton
             // 
-            LEDWindowButton.Location = new Point(12, 68);
+            LEDWindowButton.Location = new Point(2, 214);
             LEDWindowButton.Name = "LEDWindowButton";
             LEDWindowButton.Size = new Size(96, 50);
             LEDWindowButton.TabIndex = 1;
@@ -160,7 +160,7 @@
             // ATSResetButton
             // 
             ATSResetButton.Font = new Font("ＭＳ ゴシック", 24F, FontStyle.Regular, GraphicsUnit.Point, 128);
-            ATSResetButton.Location = new Point(220, 12);
+            ATSResetButton.Location = new Point(4, 6);
             ATSResetButton.Name = "ATSResetButton";
             ATSResetButton.Size = new Size(203, 83);
             ATSResetButton.TabIndex = 4;
@@ -170,7 +170,7 @@
             // 
             // SignalWindowButton
             // 
-            SignalWindowButton.Location = new Point(12, 12);
+            SignalWindowButton.Location = new Point(2, 158);
             SignalWindowButton.Name = "SignalWindowButton";
             SignalWindowButton.Size = new Size(96, 50);
             SignalWindowButton.TabIndex = 5;
@@ -416,7 +416,7 @@
             panel2.Controls.Add(RetsubanText);
             panel2.Controls.Add(panel1);
             panel2.Controls.Add(label3);
-            panel2.Location = new Point(633, 180);
+            panel2.Location = new Point(217, 8);
             panel2.Name = "panel2";
             panel2.Size = new Size(269, 272);
             panel2.TabIndex = 8;
@@ -481,7 +481,7 @@
             label5.BackColor = Color.Gold;
             label5.Font = new Font("ＭＳ ゴシック", 18F, FontStyle.Regular, GraphicsUnit.Point, 128);
             label5.ForeColor = Color.Black;
-            label5.Location = new Point(220, 98);
+            label5.Location = new Point(4, 92);
             label5.Name = "label5";
             label5.RightToLeft = RightToLeft.No;
             label5.Size = new Size(203, 60);
@@ -494,16 +494,17 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 16F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(914, 480);
-            Controls.Add(label5);
+            ClientSize = new Size(498, 308);
             Controls.Add(panel2);
             Controls.Add(SignalWindowButton);
             Controls.Add(ATSResetButton);
             Controls.Add(LEDWindowButton);
             Controls.Add(statusStrip1);
+            Controls.Add(label5);
             Font = new Font("ＭＳ ゴシック", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             Name = "MainWindow";
             Text = "MainWindow";
+            Load += MainWindow_Load;
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();
             panel1.ResumeLayout(false);
