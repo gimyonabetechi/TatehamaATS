@@ -129,15 +129,16 @@ namespace TatehamaATS
                 var display = TrainState.ATSDisplay;
                 if (display != null)
                 {
+                    List<string> L3List;
                     if (ExceptionCodes.Count != 0)
                     {
-                        display.L3 = ExceptionCodes;
+                        L3List = ExceptionCodes;
                     }
                     else
                     {
-                        display.RemoveError();
+                        L3List = display.L3;
                     }
-                    if (display.L3.Count == 0)
+                    if (L3List.Count == 0)
                     {
                         L3Start = TrainState.NowTime;
                         ledWindow.DisplayImage(1, ConvertToLEDNumber(overrideText != null ? overrideText : display.L1));
@@ -146,15 +147,26 @@ namespace TatehamaATS
                     }
                     else
                     {
-                        if (display.L3.Count == 1)
+                        var NowTime = TrainState.NowTime;
+                        if (TrainState.NowTime == TimeSpan.Zero)
                         {
-                            L3Start = TrainState.NowTime;
+                            NowTime = DateTime.Now.TimeOfDay; 
                         }
-                        l3Index = (int)((TrainState.NowTime - L3Start).TotalSeconds * 2 + 1) % display.L3.Count;
-                        ledWindow.DisplayImage(3, ConvertToLEDNumber(display.L3[l3Index]));
+
+                        if (L3List.Count == 1)
+                        {
+                            L3Start = NowTime;
+                            l3Index = 0;
+                        }
+                        else
+                        {
+                            l3Index = (int)((NowTime - L3Start).TotalSeconds * 2 + 1) % L3List.Count;
+                        }
+
+                        ledWindow.DisplayImage(3, ConvertToLEDNumber(L3List[l3Index]));
 
                         //L3に数値赤要素があるとき
-                        if (display.L3.Contains("B動作") || display.L3.Contains("EB"))
+                        if (L3List.Contains("B動作") || L3List.Contains("EB"))
                         {
                             //赤い方
                             ledWindow.DisplayImage(2, ConvertToLEDNumber(display.L2) + 100);

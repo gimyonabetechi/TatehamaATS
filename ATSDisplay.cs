@@ -32,16 +32,8 @@ namespace TatehamaATS
         /// </summary>
         public void SetLED(string L1, string L2)
         {
-            if (this.L3.Any(code => isErrorCode(code)))
-            {
-                this.L1 = "";
-                this.L2 = "";
-            }
-            else
-            {
-                this.L1 = L1;
-                this.L2 = L2;
-            }
+            this.L1 = L1;
+            this.L2 = L2;
         }
 
         /// <summary>

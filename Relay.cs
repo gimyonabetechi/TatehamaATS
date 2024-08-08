@@ -11,6 +11,7 @@ namespace TatehamaATS
     internal class Relay
     {
         public event EventHandler Init;
+        public static bool EB;
         internal Relay()
         {
             try
@@ -53,199 +54,264 @@ namespace TatehamaATS
         {
             try
             {
-                var TC_TrainState = TrainCrewInput.GetTrainState();
-
                 try
                 {
-                    TrainState.gameScreen = TrainCrewInput.gameState.gameScreen;
-                }
-                catch (Exception ex)
-                {
-                    new RelayException(3, "Relay.cs@Elapse()", ex);
-                }
+                    var TC_TrainState = TrainCrewInput.GetTrainState();
 
-                //ゲーム状態の取得
-                if (!(TrainState.gameScreen == GameScreen.MainGame || TrainState.gameScreen == GameScreen.MainGame_Pause))
-                {
-                    //ゲーム中orゲームポーズ中ではない
+                    try
+                    {
+                        TrainState.gameScreen = TrainCrewInput.gameState.gameScreen;
+                    }
+                    catch (Exception ex)
+                    {
+                        new RelayOtherInfoAbnormal(3, "Relay.cs@Elapse()", ex);
+                    }
+
+                    //ゲーム状態の取得
+                    if (!(TrainState.gameScreen == GameScreen.MainGame || TrainState.gameScreen == GameScreen.MainGame_Pause))
+                    {
+                        //ゲーム中orゲームポーズ中ではない
+                        if (TrainState.RouteDatabase != null)
+                        {
+                            if (TrainState.OnTrackIndex == TrainState.RouteDatabase.CircuitList.Count - 1 && TrainState.OnTrack != null)
+                            {
+                                //最終トラック
+                                switch (TrainState.OnTrack.Name)
+                                {
+                                    case "館浜下り場内1LA":
+                                    case "館浜下り場内1LB":
+                                    case "館浜下り場内1LC":
+                                    case "館浜下り場内1LD":
+                                    case "新野崎入換111R":
+                                    case "大道寺上り場内8R":
+                                    case "大道寺入換105R":
+                                    case "大道寺入換110R":
+                                        //在線解除しない
+                                        break;
+                                    default:
+                                        _ = MainWindow.signalSocket.leaveSignal(TrainState.OnTrack);
+                                        break;
+                                }
+
+                            }
+                            MainWindow.retsuban?.Init();
+                            TrainState.init();
+                        }
+                    }
+                    else
+                    {
+                        //ゲーム中orゲームポーズ中
+                        if (MainWindow.retsuban != null && MainWindow.retsuban.NowSelect == 0)
+                        {
+                            Debug.WriteLine("リセット");
+                            MainWindow.retsuban?.Load();
+                        }
+                    }
+
+                    //自車車種の取得
+                    try
+                    {
+                        TrainState.TrainName = TC_TrainState.CarStates[0].CarModel;
+                    }
+                    catch (Exception ex)
+                    {
+                        new RelayCarTypeAbnormal(3, "Relay.cs@Elapse()", ex);
+                    }
+
+                    if (TrainState.gameScreen == GameScreen.MainGame || TrainState.gameScreen == GameScreen.MainGame_Pause)
+                    {
+                        //運転中
+                        switch (TrainState.TrainName)
+                        {
+                            case "50000":
+                            case "5320":
+                            case "5300":
+                            case "4321":
+                            case "4300":
+                            case "4000R":
+                            case "4000":
+                            case "3300V":
+                            case "3300":
+                                if (EB)
+                                {
+                                    TrainCrewInput.SetATO_Notch(-8);
+                                }
+                                else
+                                {
+                                    TrainCrewInput.SetATO_Notch(0);
+                                }
+                                break;
+                            case "3020":
+                            case "3000":
+                                if (EB)
+                                {
+                                    TrainCrewInput.SetATO_Notch(-9);
+                                }
+                                else
+                                {
+                                    TrainCrewInput.SetATO_Notch(0);
+                                }
+                                break;
+                            default:
+                                throw new RelayCarTypeAbnormal(3, $"未定義車種{TrainState.TrainName}");
+                        }
+                    }
+
+
+                    //自車速度の取得
+                    try
+                    {
+                        TrainState.TrainSpeed = TC_TrainState.Speed;
+                    }
+                    catch (Exception ex)
+                    {
+                        new TGAbnormalException(3, "Relay.cs@Elapse()", ex);
+                    }
+
+                    //ノッチ・現在時刻取得
+                    try
+                    {
+                        TrainState.TrainPnotch = TC_TrainState.Pnotch;
+                        TrainState.TrainBnotch = TC_TrainState.Bnotch;
+                        TrainState.NowTime = TC_TrainState.NowTime;
+                    }
+                    catch (Exception ex)
+                    {
+                        new RelayCarInfoAbnormal(3, "Relay.cs@Elapse()", ex);
+                    }
+
+                    //現在のATS表示器取得
+                    try
+                    {
+                        //TrainState.TC_ATSDisplay = new ATSDisplay(TC_TrainState.ATS_Class, TC_TrainState.ATS_Speed, [TC_TrainState.ATS_State]);
+                        TrainState.ATSDisplay?.SetLED(TC_TrainState.ATS_Class, TC_TrainState.ATS_Speed);
+                        TrainState.ATSDisplay?.AddState(TC_TrainState.ATS_State);
+                    }
+                    catch (Exception ex)
+                    {
+                        new TCSideATSDataAbnormalException(3, "Relay.cs@Elapse()", ex);
+                    }
+
+                    //軌道回路情報あり
                     if (TrainState.RouteDatabase != null)
                     {
-                        if (TrainState.OnTrackIndex == TrainState.RouteDatabase.CircuitList.Count - 1 && TrainState.OnTrack != null)
+                        var nowDis = TC_TrainState.TotalLength;
+                        //Debug.WriteLine($"{nowDis}");
+                        //現在軌道回路インデックス不明 ≒ リセット時
+                        if (TrainState.OnTrackIndex == null)
                         {
-                            //最終トラック
-                            switch(TrainState.OnTrack.Name){
-                                case "館浜下り場内1LA":
-                                case "館浜下り場内1LB":
-                                case "館浜下り場内1LC":
-                                case "館浜下り場内1LD":
-                                case "新野崎入換111R":
-                                case "大道寺上り場内8R":
-                                case "大道寺入換105R":
-                                case "大道寺入換110R":
-                                    //在線解除しない
-                                    break;
-                                default:
-                                    _ = MainWindow.signalSocket.leaveSignal(TrainState.OnTrack);
-                                    break;
-                            }
-
-                        }
-                        MainWindow.retsuban?.Init();
-                        TrainState.init();
-                    }
-                }
-                else
-                {
-                    //ゲーム中orゲームポーズ中
-                    if (MainWindow.retsuban != null && MainWindow.retsuban.NowSelect == 0)
-                    {
-                        Debug.WriteLine("リセット");
-                        MainWindow.retsuban?.Load();
-                    }
-                }
-
-                //自車速度の取得
-                try
-                {
-                    TrainState.TrainSpeed = TC_TrainState.Speed;
-                }
-                catch (Exception ex)
-                {
-                    new TGAbnormalException(3, "Relay.cs@Elapse()", ex);
-                }
-
-                //ノッチ・現在時刻取得
-                try
-                {
-                    TrainState.TrainPnotch = TC_TrainState.Pnotch;
-                    TrainState.TrainBnotch = TC_TrainState.Bnotch;
-                    TrainState.NowTime = TC_TrainState.NowTime;
-                }
-                catch (Exception ex)
-                {
-                    new RelayException(3, "Relay.cs@Elapse()", ex);
-                }
-
-                //現在のATS表示器取得
-                try
-                {
-                    //TrainState.TC_ATSDisplay = new ATSDisplay(TC_TrainState.ATS_Class, TC_TrainState.ATS_Speed, [TC_TrainState.ATS_State]);
-                    TrainState.ATSDisplay?.SetLED(TC_TrainState.ATS_Class, TC_TrainState.ATS_Speed);
-                    TrainState.ATSDisplay?.AddState(TC_TrainState.ATS_State);
-                }
-                catch (Exception ex)
-                {
-                    new TCSideATSDataAbnormalException(3, "Relay.cs@Elapse()", ex);
-                }
-
-                //軌道回路情報あり
-                if (TrainState.RouteDatabase != null)
-                {
-                    var nowDis = TC_TrainState.TotalLength;
-                    //Debug.WriteLine($"{nowDis}");
-                    //現在軌道回路インデックス不明 ≒ リセット時
-                    if (TrainState.OnTrackIndex == null)
-                    {
-                        TrainState.OnTrackIndex = 0;
-                        foreach (var track in TrainState.RouteDatabase.CircuitList)
-                        {
-                            if (track.StartMeter < nowDis && nowDis < track.EndMeter)
+                            TrainState.OnTrackIndex = 0;
+                            foreach (var track in TrainState.RouteDatabase.CircuitList)
                             {
-                                break;
+                                if (track.StartMeter < nowDis && nowDis < track.EndMeter)
+                                {
+                                    break;
+                                }
+                                _ = MainWindow.signalSocket.leaveSignal(track);
+                                TrainState.OnTrackIndex++;
                             }
-                            _ = MainWindow.signalSocket.leaveSignal(track);
-                            TrainState.OnTrackIndex++;
+                            TrackInfoGet(TrainState.OnTrackIndex == 0);
                         }
-                        TrackInfoGet(TrainState.OnTrackIndex == 0);
-                    }
 
-                    //現在軌道回路あり
-                    if (TrainState.OnTrack != null)
-                    {
-                        //現在在線を先頭が越えたら
-                        if (TrainState.OnTrack.EndMeter < nowDis)
+                        //現在軌道回路あり
+                        if (TrainState.OnTrack != null)
                         {
-                            TrainState.OnTrackIndex++;
-                            if ((int)TrainState.OnTrackIndex - 1 < TrainState.RouteDatabaseCount)
+                            //現在在線を先頭が越えたら
+                            if (TrainState.OnTrack.EndMeter < nowDis)
+                            {
+                                TrainState.OnTrackIndex++;
+                                if ((int)TrainState.OnTrackIndex - 1 < TrainState.RouteDatabaseCount)
+                                {
+                                    _ = MainWindow.signalSocket.leaveSignal(TrainState.BeforeTrack);
+                                    TrainState.BeforeTrack = TrainState.RouteDatabase.CircuitList[(int)TrainState.OnTrackIndex - 1];
+                                }
+                                TrackInfoGet();
+                                Debug.WriteLine("現在在線を先頭が越えたら");
+                                _ = MainWindow.signalSocket.enterSignal(TrainState.OnTrack);
+                            }
+                            //在線を先頭が踏んで戻ったら 
+                            if (TrainState.OnTrack.StartMeter > nowDis)
+                            {
+                                TrainState.OnTrackIndex--;
+                                TrackInfoGet();
+                                Debug.WriteLine("在線を先頭が踏んで戻ったら");
+                                _ = MainWindow.signalSocket.leaveSignal(TrainState.NextTrack);
+                            }
+                            //在線を最後尾が踏んで戻ったら 
+                            if (TrainState.OnTrack.StartMeter > nowDis - TrainState.TrainLength && TrainState.BeforeTrack == null)
                             {
                                 TrainState.BeforeTrack = TrainState.RouteDatabase.CircuitList[(int)TrainState.OnTrackIndex - 1];
+                                Debug.WriteLine("在線を最後尾が踏んで戻ったら");
+                                _ = MainWindow.signalSocket.enterSignal(TrainState.BeforeTrack);
                             }
-                            TrackInfoGet();
-                            Debug.WriteLine("現在在線を先頭が越えたら");
-                            _ = MainWindow.signalSocket.enterSignal(TrainState.OnTrack);
-                        }
-                        //在線を先頭が踏んで戻ったら 
-                        if (TrainState.OnTrack.StartMeter > nowDis)
-                        {
-                            TrainState.OnTrackIndex--;
-                            TrackInfoGet();
-                            Debug.WriteLine("在線を先頭が踏んで戻ったら");
-                            _ = MainWindow.signalSocket.leaveSignal(TrainState.NextTrack);
-                        }
-                        //在線を最後尾が踏んで戻ったら 
-                        if (TrainState.OnTrack.StartMeter > nowDis - TrainState.TrainLength && TrainState.BeforeTrack == null)
-                        {
-                            TrainState.BeforeTrack = TrainState.RouteDatabase.CircuitList[(int)TrainState.OnTrackIndex - 1];
-                            Debug.WriteLine("在線を最後尾が踏んで戻ったら");
-                            _ = MainWindow.signalSocket.enterSignal(TrainState.BeforeTrack);
-                        }
 
-                        //進入完了処理
-                        if (TrainState.OnTrack.EndMeter - (nowDis - TrainState.TrainLength) < 150)
-                        {
-                            //ケツが150mならいくら何でも入りきってるで
-                            if (!TrainState.OnTrack.enterComp)
+                            //進入完了処理
+                            if (TrainState.OnTrack.EndMeter - (nowDis - TrainState.TrainLength) < 150)
                             {
-                                _ = MainWindow.signalSocket.enteringComplete(TrainState.OnTrack);
-                                TrainState.OnTrack.enterComp = true;
+                                //ケツが150mならいくら何でも入りきってるで
+                                if (!TrainState.OnTrack.enterComp)
+                                {
+                                    _ = MainWindow.signalSocket.enteringComplete(TrainState.OnTrack);
+                                    TrainState.OnTrack.enterComp = true;
+                                }
+                            }
+                            else if (TrainState.OnTrack.EndMeter - (nowDis - TrainState.TrainLength) < 200 && TrainState.TrainSpeed == 0)
+                            {
+                                //ケツが200m以内で停止したら入線しきってると思う    
+                                if (!TrainState.OnTrack.enterComp)
+                                {
+                                    _ = MainWindow.signalSocket.enteringComplete(TrainState.OnTrack);
+                                    TrainState.OnTrack.enterComp = true;
+                                }
+                            }
+                            else if (TrainState.OnTrackIndex == 0)
+                            {
+                                //0番軌道回路の場合は強制OK
+                                if (!TrainState.OnTrack.enterComp)
+                                {
+                                    _ = MainWindow.signalSocket.enteringComplete(TrainState.OnTrack);
+                                    TrainState.OnTrack.enterComp = true;
+                                }
+                            }
+                            else
+                            {
+                                TrainState.OnTrack.enterComp = false;
                             }
                         }
-                        else if (TrainState.OnTrack.EndMeter - (nowDis - TrainState.TrainLength) < 200 && TrainState.TrainSpeed == 0)
+                        if (TrainState.BeforeTrack != null)
                         {
-                            //ケツが200m以内で停止したら入線しきってると思う    
-                            if (!TrainState.OnTrack.enterComp)
+                            //前在線を最後尾が抜けたら  
+                            if (TrainState.BeforeTrack.EndMeter < nowDis - TrainState.TrainLength)
                             {
-                                _ = MainWindow.signalSocket.enteringComplete(TrainState.OnTrack);
-                                TrainState.OnTrack.enterComp = true;
+                                Debug.WriteLine("前在線を最後尾が抜けたら");
+                                _ = MainWindow.signalSocket.leaveSignal(TrainState.BeforeTrack);
+                                TrainState.BeforeTrack = null;
                             }
-                        }
-                        else if (TrainState.OnTrackIndex == 0)
-                        {
-                            //0番軌道回路の場合は強制OK
-                            if (!TrainState.OnTrack.enterComp)
-                            {
-                                _ = MainWindow.signalSocket.enteringComplete(TrainState.OnTrack);
-                                TrainState.OnTrack.enterComp = true;
-                            }
-                        }
-                        else
-                        {
-                            TrainState.OnTrack.enterComp = false;
                         }
                     }
-                    if (TrainState.BeforeTrack != null)
+                    else
                     {
-                        //前在線を最後尾が抜けたら  
-                        if (TrainState.BeforeTrack.EndMeter < nowDis - TrainState.TrainLength)
-                        {
-                            Debug.WriteLine("前在線を最後尾が抜けたら");
-                            _ = MainWindow.signalSocket.leaveSignal(TrainState.BeforeTrack);
-                            TrainState.BeforeTrack = null;
-                        }
+                        TrainState.OnTrackIndex = null;
                     }
                 }
-                else
+                catch (ATSCommonException ex)
                 {
-                    TrainState.OnTrackIndex = null;
+                    throw ex;
                 }
+                catch (Exception ex)
+                {
+                    throw new RelayOtherInfoAbnormal(3, "Relay.cs@Elapse()", ex);
+                }
+            }
+            catch (ATSCommonException ex)
+            {
+                throw ex;
             }
             catch (Exception ex)
             {
                 throw new RelayException(3, "Relay.cs@Elapse()", ex);
             }
         }
-
-
         private void TrackInfoGet(bool first = false)
         {
             if (TrainState.RouteDatabase != null && TrainState.OnTrackIndex != null)

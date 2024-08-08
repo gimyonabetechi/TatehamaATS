@@ -51,10 +51,18 @@ namespace TatehamaATS
         {
             while (true)
             {
-                var timer = Task.Delay(20);
+                var timer = Task.Delay(10);
                 try
                 {
                     ResetException();
+                    if (exceptions.Any(x => x.Value.ToBrake() == OutputBrake.EB))
+                    {
+                        Relay.EB = true;
+                    }
+                    else
+                    {
+                        Relay.EB = false;
+                    }
                 }
                 catch (ATSCommonException ex)
                 {
