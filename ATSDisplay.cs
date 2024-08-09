@@ -45,16 +45,6 @@ namespace TatehamaATS
             {
                 L3.Add(addL3);
             }
-            //故障コードとそれ以外の共存不可
-            if (TrainState.ATSBroken)
-            {
-                L3.RemoveAll(s => !isErrorCode(s));
-                RemoveState("");
-                RemoveState("無表示");
-            }
-            else
-            {
-                L3.RemoveAll(s => isErrorCode(s));
                 //通常表示の共存不可関係
                 switch (addL3)
                 {
@@ -107,7 +97,6 @@ namespace TatehamaATS
                         L3.Add("");
                         break;
                 }
-            }
 
         }
 
@@ -120,10 +109,6 @@ namespace TatehamaATS
             L3.Remove(removeL3);
         }
 
-        public void RemoveError()
-        {
-            L3.RemoveAll(s => isErrorCode(s));
-        }
 
         public override string ToString()
         {

@@ -150,7 +150,7 @@ namespace TatehamaATS
                         var NowTime = TrainState.NowTime;
                         if (TrainState.NowTime == TimeSpan.Zero)
                         {
-                            NowTime = DateTime.Now.TimeOfDay; 
+                            NowTime = DateTime.Now.TimeOfDay;
                         }
 
                         if (L3List.Count == 1)
