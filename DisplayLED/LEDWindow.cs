@@ -10,8 +10,16 @@ namespace TatehamaATS.DisplayLED
         {
             InitializeComponent();
             sourceImage = Properties.Resources.ATS_LED2;
+            Shown += TopMost_Shown;
         }
 
+        private void TopMost_Shown(Object? sender, EventArgs e)
+        {
+            TopLevel = false;
+            TopLevel = true;
+            TopMost = false;
+            TopMost = true;
+        }
         /// <summary>
         /// 切り出された画像を引き伸ばし、指定の表示器に表示する
         /// </summary>

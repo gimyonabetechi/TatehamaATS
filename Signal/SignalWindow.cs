@@ -15,9 +15,17 @@ namespace TatehamaATS.Signal
         {
             InitializeComponent();
             TransparencyKey = BackColor;
+            Shown += TopMost_Shown;
             Show();
 
             Task.Run(() => StartUpdateLoop());
+        }
+
+        private void TopMost_Shown(Object? sender, EventArgs e)
+        {
+            TransparencyKey = BackColor;
+            TopMost = false;
+            TopMost = true;
         }
 
         public void SignalHide()
