@@ -69,6 +69,7 @@
             RetsubanText = new Label();
             label3 = new Label();
             label5 = new Label();
+            Clock = new Label();
             statusStrip1.SuspendLayout();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
@@ -78,7 +79,7 @@
             // 
             statusStrip1.Font = new Font("ＭＳ ゴシック", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1, TanudenStatus, toolStripStatusLabel2, SignalStatus, toolStripStatusLabel3, LEDStatus, toolStripStatusLabel4, SigWinStatus, toolStripStatusLabel5 });
-            statusStrip1.Location = new Point(0, 283);
+            statusStrip1.Location = new Point(0, 320);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Size = new Size(554, 25);
             statusStrip1.TabIndex = 0;
@@ -145,7 +146,7 @@
             toolStripStatusLabel5.BorderSides = ToolStripStatusLabelBorderSides.Left | ToolStripStatusLabelBorderSides.Right;
             toolStripStatusLabel5.Name = "toolStripStatusLabel5";
             toolStripStatusLabel5.Size = new Size(75, 20);
-            toolStripStatusLabel5.Text = "Ver0.4.0";
+            toolStripStatusLabel5.Text = "Ver0.4.2";
             // 
             // LEDWindowButton
             // 
@@ -416,7 +417,7 @@
             panel2.Controls.Add(RetsubanText);
             panel2.Controls.Add(panel1);
             panel2.Controls.Add(label3);
-            panel2.Location = new Point(273, 8);
+            panel2.Location = new Point(273, 45);
             panel2.Name = "panel2";
             panel2.Size = new Size(269, 272);
             panel2.TabIndex = 8;
@@ -486,15 +487,31 @@
             label5.RightToLeft = RightToLeft.No;
             label5.Size = new Size(203, 60);
             label5.TabIndex = 11;
-            label5.Text = "復帰は指令の\r\n指示を受けてから";
+            label5.Text = "復帰は司令の\r\n指示を受けてから";
             label5.TextAlign = ContentAlignment.MiddleLeft;
             label5.UseMnemonic = false;
+            // 
+            // Clock
+            // 
+            Clock.BackColor = Color.Black;
+            Clock.Font = new Font("ＭＳ ゴシック", 18F, FontStyle.Regular, GraphicsUnit.Point, 128);
+            Clock.ForeColor = Color.LightCoral;
+            Clock.Location = new Point(313, 6);
+            Clock.Name = "Clock";
+            Clock.RightToLeft = RightToLeft.No;
+            Clock.Size = new Size(229, 31);
+            Clock.TabIndex = 12;
+            Clock.Text = "現在時刻　12:34:56";
+            Clock.TextAlign = ContentAlignment.MiddleCenter;
+            Clock.UseMnemonic = false;
+            Clock.MouseDown += Time_Click;
             // 
             // MainWindow
             // 
             AutoScaleDimensions = new SizeF(8F, 16F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(554, 308);
+            ClientSize = new Size(554, 345);
+            Controls.Add(Clock);
             Controls.Add(panel2);
             Controls.Add(SignalWindowButton);
             Controls.Add(ATSResetButton);
@@ -502,6 +519,7 @@
             Controls.Add(statusStrip1);
             Controls.Add(label5);
             Font = new Font("ＭＳ ゴシック", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
             Name = "MainWindow";
             Text = "MainWindow";
             Load += MainWindow_Load;
@@ -557,5 +575,6 @@
         private Label label6;
         private Label label3;
         private ToolStripStatusLabel toolStripStatusLabel5;
+        private Label Clock;
     }
 }

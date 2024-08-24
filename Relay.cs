@@ -1,6 +1,8 @@
-﻿using System.Diagnostics;
+﻿using Microsoft.VisualBasic.Devices;
+using System.Diagnostics;
 using TatehamaATS.Exceptions;
 using TrainCrew;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
 namespace TatehamaATS
@@ -12,8 +14,11 @@ namespace TatehamaATS
     {
         public event EventHandler Init;
         public static bool EB;
-        internal Relay()
+        private TimeSpan ShiftTime = TimeSpan.FromHours(10);
+        private Label Clock;
+        internal Relay(Label clock)
         {
+            Clock = clock;
             try
             {
                 TrainCrewInput.Init();
@@ -25,6 +30,29 @@ namespace TatehamaATS
             Task.Run(() => StartUpdateLoop());
         }
 
+        internal void Time_Click(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                ShiftTime += TimeSpan.FromHours(1);
+            }
+            else
+            {
+                ShiftTime -= TimeSpan.FromHours(1);
+            }
+        }
+
+        internal void ClockChenge()
+        {
+            if (Clock != null && Clock.IsHandleCreated)
+            {
+                Clock.Invoke((MethodInvoker)(() =>
+                {
+                    Clock.Text = $"現在時刻　{DateTime.Now - ShiftTime:HH:mm:ss}";
+                }));
+            }
+        }
+
         /// <summary>
         /// 非同期で表示器を更新するループを開始する
         /// </summary>
@@ -32,6 +60,7 @@ namespace TatehamaATS
         {
             while (true)
             {
+                ClockChenge();
                 var timer = Task.Delay(100);
                 try
                 {

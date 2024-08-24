@@ -15,13 +15,14 @@ namespace TatehamaATS
         static internal Transfer transfer = new Transfer();
         static internal ControlLED controlLED;
 
+
         public MainWindow()
         {
             try
             {
                 InitializeComponent();
                 TrainState.init();
-                relay = new Relay();
+                relay = new Relay(Clock);
                 signalWindow = new SignalWindow();
                 retsuban = new Retsuban(RetsubanText, CarText);
                 controlLED = new ControlLED();
@@ -30,6 +31,11 @@ namespace TatehamaATS
             {
                 inspectionRecord.AddException(ex);
             }
+        }
+
+        private void Time_Click(object sender, MouseEventArgs e)
+        {
+            relay.Time_Click(sender, e);
         }
 
         private void LEDWindowButton_Click(object sender, EventArgs e)
