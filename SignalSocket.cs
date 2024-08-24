@@ -233,6 +233,17 @@ namespace TatehamaATS
                         TrainState.RouteDatabase.CircuitList[0].ChengeName("館浜下り場内1LB");
                         TrainState.RouteDatabase.CircuitList[1].ChengeName("館浜上り出発2R");
                         break;
+                    case "回7191":
+                    case "回7291":
+                        MainWindow.controlLED.overrideText = "回送-2";
+                        TrainState.RouteDatabase.CircuitList[34].ChengeName("館浜下り場内1LB");
+                        break;
+                    case "回7190":
+                    case "回7290":
+                        MainWindow.controlLED.overrideText = "回送-2";
+                        TrainState.RouteDatabase.CircuitList[0].ChengeName("館浜下り場内1LB");
+                        TrainState.RouteDatabase.CircuitList[1].ChengeName("館浜上り出発2R");
+                        break;
                     default:
                         MainWindow.controlLED.overrideText = null;
                         break;
