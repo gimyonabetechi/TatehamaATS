@@ -21,7 +21,7 @@ namespace TatehamaATS
         /// <summary>
         /// 故障発生から故障復帰までの最低時間
         /// </summary>
-        private static TimeSpan resetTime = TimeSpan.FromSeconds(3);
+        private static TimeSpan resetTime = TimeSpan.FromSeconds(3.5);
 
         public bool RetsubanReset;
         private bool StopDetection;
