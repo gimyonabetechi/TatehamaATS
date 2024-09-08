@@ -29,6 +29,7 @@ namespace TatehamaATS.Diadata
                 case "1294KX":
                 case "回7190":
                 case "回7290":
+                case "6981K":
                     //元シナリオ：館　浜　発車シナリオ共通　　　　　　／内容：着線２番振替    
                     TrainState.RouteDatabase.CircuitList[0].ChengeName("館浜下り場内1LB");
                     TrainState.RouteDatabase.CircuitList[1].ChengeName("館浜上り出発2R");
