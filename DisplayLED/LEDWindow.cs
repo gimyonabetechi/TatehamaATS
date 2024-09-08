@@ -32,7 +32,7 @@ namespace TatehamaATS.DisplayLED
                 Bitmap croppedImage;
                 if (0x180 <= imageNumber && imageNumber <= 0x1FF || 0x280 <= imageNumber && imageNumber <= 0x2FF || 0x380 <= imageNumber && imageNumber <= 0x3FF)
                 {
-                    croppedImage = GetImageByNumber(311);
+                    croppedImage = GetImageByNumber(411);
                     //コード表示無視
                     int codeC = (imageNumber >> 8) & 0xF;
                     Bitmap codeCImage = GetImageByCodeNumber(codeC);
@@ -105,7 +105,7 @@ namespace TatehamaATS.DisplayLED
         /// <returns>切り出された画像</returns>
         private Bitmap GetImageByNumber(int number)
         {
-            int columns = 4;
+            int columns = 5;
             int rows = 27;
             int width = 32;
             int height = 16;
@@ -143,7 +143,7 @@ namespace TatehamaATS.DisplayLED
             int width = 6;
             int height = 16;
             int margin = 1;
-            int dx = 104;
+            int dx = 137;
             int dy = 204;
 
 
