@@ -39,7 +39,7 @@ namespace TatehamaATS.Diadata
                 case "7282C":
                 case "1180C":
                 case "1280C":
-                    MainWindow.controlLED.overrideText = "だんじり準急" :
+                    MainWindow.controlLED.overrideText = "だんじり準急";
                     break;
                 case "7281B":
                 case "1195B":

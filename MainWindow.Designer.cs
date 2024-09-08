@@ -146,7 +146,7 @@
             toolStripStatusLabel5.BorderSides = ToolStripStatusLabelBorderSides.Left | ToolStripStatusLabelBorderSides.Right;
             toolStripStatusLabel5.Name = "toolStripStatusLabel5";
             toolStripStatusLabel5.Size = new Size(75, 20);
-            toolStripStatusLabel5.Text = "Ver0.4.3";
+            toolStripStatusLabel5.Text = "Ver0.4.4";
             // 
             // LEDWindowButton
             // 
