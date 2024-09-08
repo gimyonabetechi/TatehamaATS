@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using TatehamaATS.Database;
 using TatehamaATS.Exceptions;
+using TatehamaATS.Diadata;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
 namespace TatehamaATS
@@ -19,6 +20,9 @@ namespace TatehamaATS
         private int leaveSignalTimeoutCount = 0;
         private int enteringCompleteTimeoutCount = 0;
         private const int TimeoutLimit = 5;
+        private DiaNameToDatebaseName DiaNameToDatebaseName = new DiaNameToDatebaseName();
+        private DiaNameTrack DiaNameTrack = new DiaNameTrack();
+        private TypeLED TypeLED = new TypeLED();
 
         internal SignalSocket()
         {
@@ -171,14 +175,8 @@ namespace TatehamaATS
             {
                 return;
             }
-            var diaName = TrainState.TrainDiaName;
+            var diaName = DiaNameToDatebaseName.ChengeDiaName(TrainState.TrainDiaName);
 
-            //非プレイアブル列番対照表に従って置換
-            if (RetsubanTable.ContainsKey(diaName))
-            {
-                diaName = RetsubanTable[diaName];
-            }
-            Debug.WriteLine($"{diaName}_{TrainState.TrainCar}");
             await client.EmitAsync("getRoute", $"{diaName}_{TrainState.TrainCar}");
             var ecs = new TaskCompletionSource<List<RawTrackCircuitInfo>>();
             client.On("getRouteResult", response =>
@@ -199,55 +197,8 @@ namespace TatehamaATS
                     TrainState.RouteDatabase.AddTrack(track.toTrackCircuitInfo());
                 }
 
-                //ダイヤ運転会用特定列番上書き
-                switch (TrainState.TrainDiaName)
-                {
-                    case "1110A":
-                        MainWindow.controlLED.overrideText = "C特1";
-                        break;
-                    case "1017A":
-                        MainWindow.controlLED.overrideText = "C特2-2";
-                        TrainState.RouteDatabase.CircuitList[35].ChengeName("館浜下り場内1LB");
-                        break;
-                    case "回1295":
-                    case "回1295X":
-                    case "回1281":
-                        MainWindow.controlLED.overrideText = "回送-2";
-                        TrainState.RouteDatabase.CircuitList[34].ChengeName("館浜下り場内1LB");
-                        break;
-                    case "回1294":
-                    case "回1294X":
-                    case "回1280":
-                        MainWindow.controlLED.overrideText = "回送-2";
-                        TrainState.RouteDatabase.CircuitList[0].ChengeName("館浜下り場内1LB");
-                        TrainState.RouteDatabase.CircuitList[1].ChengeName("館浜上り出発2R");
-                        break;
-                    case "1295B":
-                    case "1295BX":
-                    case "1281B":
-                        MainWindow.controlLED.overrideText = "だんじり急行";
-                        TrainState.RouteDatabase.CircuitList[34].ChengeName("館浜下り場内1LB");
-                        break;
-                    case "1294KX":
-                        MainWindow.controlLED.overrideText = "だんじり快急";
-                        TrainState.RouteDatabase.CircuitList[0].ChengeName("館浜下り場内1LB");
-                        TrainState.RouteDatabase.CircuitList[1].ChengeName("館浜上り出発2R");
-                        break;
-                    case "回7191":
-                    case "回7291":
-                        MainWindow.controlLED.overrideText = "回送-2";
-                        TrainState.RouteDatabase.CircuitList[34].ChengeName("館浜下り場内1LB");
-                        break;
-                    case "回7190":
-                    case "回7290":
-                        MainWindow.controlLED.overrideText = "回送-2";
-                        TrainState.RouteDatabase.CircuitList[0].ChengeName("館浜下り場内1LB");
-                        TrainState.RouteDatabase.CircuitList[1].ChengeName("館浜上り出発2R");
-                        break;
-                    default:
-                        MainWindow.controlLED.overrideText = null;
-                        break;
-                }
+                DiaNameTrack.ChengeTrack(TrainState.TrainDiaName);
+                TypeLED.ChengeTypeLED(TrainState.TrainDiaName);
 
                 TrainState.chengeDiaName = false;
                 TrainState.RouteDatabaseCount = TrainState.RouteDatabase.CircuitList.Count;
@@ -274,6 +225,7 @@ namespace TatehamaATS
             {
                 if (!isSocketConnect)
                 {
+
                     continue;
                 }
                 var timer = Task.Delay(500);
