@@ -98,7 +98,7 @@ namespace TatehamaATS
                 }
                 var deltaT = DateTime.Now - TestStart;
 
-                var LED = deltaT.Seconds % 3 + 319;
+                var LED = deltaT.Seconds % 3 + 419;
                 var Place = deltaT.Seconds / 3 % 3 + 1;
                 if (deltaT < TimeSpan.FromSeconds(9))
                 {
@@ -169,6 +169,11 @@ namespace TatehamaATS
                         if (L3List.Contains("B動作") || L3List.Contains("EB"))
                         {
                             //赤い方
+                            ledWindow.DisplayImage(2, ConvertToLEDNumber(display.L2) + 200);
+                        }
+                        else if (L3List.Contains("P接近"))
+                        {
+                            //橙の方
                             ledWindow.DisplayImage(2, ConvertToLEDNumber(display.L2) + 100);
                         }
                         else
@@ -238,7 +243,7 @@ namespace TatehamaATS
                 }
                 if (parse == 300)
                 {
-                    return 126;
+                    return 122;
                 }
                 return (parse / 5) + 101;
             }
@@ -276,28 +281,30 @@ namespace TatehamaATS
                     return 13;
                 case "回送":
                     return 15;
-                case "だんじり急行":
+                case "だんじり準急":
                     return 21;
-                case "だんじり快急":
+                case "だんじり急行":
                     return 22;
-                case "回送-2":
+                case "だんじり快急":
                     return 23;
-                case "C特2-2":
+                case "回送-2":
                     return 24;
+                case "C特2-2":
+                    return 25;
                 case "F":
                     return 126;
                 case "P":
-                    return 300;
+                    return 400;
                 case "P接近":
-                    return 301;
+                    return 401;
                 case "B動作":
-                    return 302;
+                    return 402;
                 case "EB":
-                    return 303;
+                    return 403;
                 case "終端P":
-                    return 304;
+                    return 404;
                 case "停P":
-                    return 305;
+                    return 405;
                 default:
                     throw new LEDDisplayStringAbnormal(3, $"未定義:{str}　ControlLED.cs@ConvertToLEDNumber()");
             }

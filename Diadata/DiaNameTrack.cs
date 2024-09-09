@@ -2,8 +2,6 @@
 //構文に関するコメントを書く。
 //また、switch構文以外を弄らないこと。
 
-using TatehamaATS.Database;
-
 namespace TatehamaATS.Diadata
 {
     internal class DiaNameTrack
