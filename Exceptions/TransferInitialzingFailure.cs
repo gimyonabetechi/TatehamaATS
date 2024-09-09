@@ -1,7 +1,7 @@
 ﻿namespace TatehamaATS.Exceptions
 {
-    /// <summary>
-    /// BF:LED制御部未定義故障
+    /// <summary>                  
+    /// 85:伝送部初期化失敗
     /// </summary>
     internal class TransferInitialzingFailure : ATSCommonException
     {
