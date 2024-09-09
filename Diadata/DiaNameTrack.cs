@@ -28,7 +28,7 @@ namespace TatehamaATS.Diadata
                     TrainState.RouteDatabase.CircuitList[34].ChengeName("館浜下り場内1LB");
                     break;
                 case "7180C":
-                case "7182C":
+                case "7282C":
                 case "1180C":
                 case "1280C":
                     //元シナリオ：列番不定　館　浜　→発車共通／内容：発車２番振替 
